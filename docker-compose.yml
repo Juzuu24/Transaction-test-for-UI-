@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: juzuu24
       MYSQL_DATABASE: user
     ports:
-      - "3310:3306"
+      - "3311:3306"
     networks:
       - mynetwork
     volumes:
@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
     ports:
-      - "4100:4100"
+      - "4101:4101"
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -39,7 +39,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "3000:3000"
+      - "3001:3001"
     networks:
       - mynetwork
     volumes:

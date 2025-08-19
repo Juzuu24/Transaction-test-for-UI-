@@ -1,0 +1,103 @@
+<%
+// controls:
+//  - showTitle: true -> "Markets … See all" header
+//               false -> column labels header (Symbol / Latest Price / 24h)
+//  - showSeeAll: show the "See all" link when showTitle is true
+const _showTitle = (typeof showTitle === 'undefined') ? true : showTitle;
+const _showSeeAll = (typeof showSeeAll === 'undefined') ? true : showSeeAll;
+%>
+
+<section class="market-card">
+  <% if (_showTitle) { %>
+    <header class="market-head" style="display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-weight:700;">Markets</span>
+      <% if (_showSeeAll) { %>
+        <a href="/market" style="font-weight:600;font-size:13px;text-decoration:none;">See all ▸</a>
+      <% } %>
+    </header>
+  <% } else { %>
+    <header class="market-head">
+      <span>Symbol</span>
+      <span>Latest Price</span>
+      <span>24h</span>
+    </header>
+  <% } %>
+
+  <ul class="market-list">
+    <% (markets || []).forEach(m => { 
+         const price = Number(m.price) || 0;
+         const open  = Number(m.open != null ? m.open : price);
+         const pct   = open > 0 ? ((price - open)/open)*100 : 0;
+         const up    = pct >= 0;
+    %>
+      <li class="market-row"
+          data-symbol="<%= m.symbol %>"
+          data-open="<%= open %>"
+          data-price="<%= price %>">
+        <div class="m-left">
+          <% if (m.icon) { %>
+            <img src="<%= m.icon %>" alt="" class="coin-icon">
+          <% } else { %>
+            <div class="coin-icon fallback" data-symbol="<%= m.symbol %>"><%= (m.symbol||'?')[0] %></div>
+          <% } %>
+          <div class="m-symbol"><%= m.symbol %></div>
+        </div>
+
+        <div class="m-price">
+          <%= price.toLocaleString(undefined,{ minimumFractionDigits:2, maximumFractionDigits:2 }) %>
+        </div>
+
+        <span class="badge <%= up ? 'up' : 'down' %>">
+          <%= (up?'+':'') + pct.toFixed(2) %>%
+        </span>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+<script>
+  (function(){
+    // Color fallback circles once
+    if (!window.__marketDecorInit){
+      window.__marketDecorInit = true;
+      function hash(s){ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))|0; return Math.abs(h); }
+      function color(sym){ const h=hash(sym)%360; return `hsl(${h} 70% 55%)`; }
+      document.querySelectorAll('.coin-icon.fallback').forEach(el=>{
+        const sym = el.getAttribute('data-symbol') || 'X';
+        el.style.background = color(sym);
+        el.style.color = '#fff';
+      });
+    }
+
+    // Live drift every 3 minutes (init once globally)
+    if (!window.__marketTickerInit){
+      window.__marketTickerInit = true;
+      const DRIFT_PCT_MAX = 0.08;
+      const PERIOD = 3 * 60 * 1000;
+      const fmt = n => Number(n).toLocaleString(undefined,{ minimumFractionDigits:2, maximumFractionDigits:2 });
+      function rnd(){ const s=Math.random()<0.5?-1:1; const m=Math.random()*DRIFT_PCT_MAX; return s*m; }
+      function tickRow(li){
+        const open = parseFloat(li.dataset.open);
+        let price  = parseFloat(li.dataset.price);
+        price = +( (price * (1 + rnd()/100)).toFixed(2) );
+        if (price < 0) price = 0;
+        li.dataset.price = price;
+        const priceEl = li.querySelector('.m-price');
+        if (priceEl) priceEl.textContent = fmt(price);
+        const pct = open>0 ? ((price-open)/open)*100 : 0;
+        const badge = li.querySelector('.badge');
+        const up = pct >= 0;
+        badge.classList.toggle('up', up);
+        badge.classList.toggle('down', !up);
+        badge.textContent = (up?'+':'') + pct.toFixed(2) + '%';
+      }
+      function tickAll(){ document.querySelectorAll('.market-row').forEach(tickRow); }
+      tickAll();
+      let timer = setInterval(tickAll, PERIOD);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden){ clearInterval(timer); }
+        else { timer = setInterval(tickAll, PERIOD); tickAll(); }
+      });
+    }
+  })();
+</script>

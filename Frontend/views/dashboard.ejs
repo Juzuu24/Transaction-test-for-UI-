@@ -35,93 +35,86 @@
       <p>BALANCE<br><strong>$<%= balance %></strong></p>
     </div>
     <div class="card">
-        <i class="fas fa-wallet"></i>
-        <p>Monthly CashIn<br><strong>$<%= monthlyCashIn %></strong></p>
+      <i class="fas fa-wallet"></i>
+      <p>Monthly CashIn<br><strong>$<%= monthlyCashIn %></strong></p>
     </div>
     <div class="card">
-        <i class="fas fa-sack-dollar"></i>
-        <p>Monthly CashOut<br><strong>$<%= monthlyCashOut %></strong></p>
-    </div>
-</div>
-    
-
-  <div class="actions">
-    <div class="action-box" onclick="navigateTo('/withdraw')">
-      <i class="fas fa-money-bill-wave"></i><p>WITHDRAW</p>
-    </div>
-    <div class="action-box" onclick="navigateTo('/deposit')">
-      <i class="fas fa-coins"></i><p>DEPOSIT</p>
-    </div>
-    <div class="action-box" onclick="navigateTo('/event')">
-      <i class="fas fa-receipt"></i><p>EVENTS</p>
-    </div>
-    <div class="action-box" onclick="navigateTo('/checkin')">
-      <i class="fas fa-clipboard-check"></i><p>DAILY CHECKIN</p>
+      <i class="fas fa-sack-dollar"></i>
+      <p>Monthly CashOut<br><strong>$<%= monthlyCashOut %></strong></p>
     </div>
   </div>
 
-  <div class="actions">
-    <div class="action-box" onclick="navigateTo('/order')">
-      <i class="fas fa-money-bill-wave"></i><p>Order</p>
-    </div>
-    <div class="action-box" onclick="navigateTo('/illustrate')">
-      <i class="fas fa-clipboard-check"></i><p>Illustrate</p>
-    </div>
-    <div class="action-box" onclick="navigateTo('/aboutus')">
-      <i class="fas fa-coins"></i><p>About Us</p>
-    </div>
-    <div class="action-box" onclick="navigateTo('/faq')">
-      <i class="fas fa-receipt"></i><p>FAQs</p>
-    </div>
-   
+  <!-- KBZ-style feature grid -->
+  <div class="feature-grid">
+    <a href="/withdraw" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-money-bill-wave"></i></div>
+      <span>Withdraw</span>
+    </a>
+    <a href="/deposit" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-coins"></i></div>
+      <span>Deposit</span>
+    </a>
+    <a href="/event" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-receipt"></i></div>
+      <span>Events</span>
+    </a>
+    <a href="/checkin" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-clipboard-check"></i></div>
+      <span>Daily Check-in</span>
+    </a>
+    <a href="/order" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-cart-plus"></i></div>
+      <span>Order</span>
+    </a>
+    <a href="/illustrate" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-clipboard-list"></i></div>
+      <span>Illustrate</span>
+    </a>
+    <a href="/aboutus" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-coins"></i></div>
+      <span>About Us</span>
+    </a>
+    <a href="/faq" class="feature-item">
+      <div class="icon-circle"><i class="fas fa-receipt"></i></div>
+      <span>FAQs</span>
+    </a>
   </div>
-  
 
+  <!-- Insert Market Table here -->
+  <div style="margin:20px;">
+    <h2 style="text-align:center;">Market Overview</h2>
+    <%- include('partials/market-table', { markets, showTitle: false }) %>
+  </div>
+
+  <!-- Insert Market Table here -->
  <%- include('partials/footer', { active: 'dashboard' }) %> <!-- for home page -->
- <%- include('partials/footer', { active: 'transactions' }) %> <!-- for transactions -->
- <%- include('partials/footer', { active: 'order' }) %> <!-- for order -->
- <%- include('partials/footer', { active: 'service' }) %> <!-- for service -->
- <%- include('partials/footer', { active: 'profile' }) %> <!-- for profile -->
 
 
- 
 
-  <script >
+
+  <script>
     const carousel = document.querySelector('.carousel-images');
     const images = document.querySelectorAll('.carousel-images img');
     const prevBtn = document.querySelector('.prev');
     const nextBtn = document.querySelector('.next');
-
     let index = 0;
 
-    function showSlide(i) {
-    const width = images[0].clientWidth;
-    carousel.style.transform = `translateX(${-width * i}px)`;
+    function showSlide(i){ 
+      const w = images[0].clientWidth; 
+      carousel.style.transform = `translateX(${-w*i}px)`; 
     }
-
-    prevBtn.addEventListener('click', () => {
-    index = (index - 1 + images.length) % images.length;
-    showSlide(index);
+    prevBtn.addEventListener('click', () => { 
+      index = (index - 1 + images.length) % images.length; 
+      showSlide(index); 
     });
-
-    nextBtn.addEventListener('click', () => {
-    index = (index + 1) % images.length;
-    showSlide(index);
+    nextBtn.addEventListener('click', () => { 
+      index = (index + 1) % images.length; 
+      showSlide(index); 
     });
-
-    // Optional: auto-slide
-    setInterval(() => {
-    index = (index + 1) % images.length;
-    showSlide(index);
+    setInterval(() => { 
+      index = (index + 1) % images.length; 
+      showSlide(index); 
     }, 5000);
-
-   
-  function navigateTo(path) {
-    window.location.href = path;
-  }
-
-
-
   </script>
 </body>
 </html>

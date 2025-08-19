@@ -5,6 +5,7 @@
   <title>User Profile</title>
   <link rel="stylesheet" href="/profile.css">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* Visual style for read-only fields */
     input[readonly], input[disabled] {
@@ -12,6 +13,20 @@
       border: none;
       pointer-events: none;
     }
+
+    .logout-btn{
+  background:#ef4444;           /* red */
+  color:#fff;
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 6px 14px rgba(239,68,68,.25);
+}
+.logout-btn:hover{ filter:brightness(.95); }
+.logout-btn:active{ transform:translateY(1px); }
+
   </style>
 </head>
 <body>
@@ -79,7 +94,17 @@
       <!-- Optional: Add an "Edit" button next to the section header if you want to enable editing -->
     </section>
 
-    <a href="<%= dashboardUrl %>" class="back-button">⬅ Back to home</a>
+    <section class="account-actions" style="margin: 24px 0;">
+  <form action="/logout" method="POST" class="logout-form" style="display:inline;">
+    <button type="submit" class="logout-btn" aria-label="Log out">
+      <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i> Logout
+    </button>
+  </form>
+</section>
+
+
+   
   </div>
+   <%- include('partials/footer', { active: 'profile' }) %> <!-- for profile -->
 </body>
 </html>

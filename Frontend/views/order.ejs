@@ -6,6 +6,14 @@
     <link rel="stylesheet" href="/order.css">
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      /* visual cue when blocked */
+      .start-btn button[disabled]{
+        opacity: .6;
+        cursor: not-allowed;
+        filter: grayscale(20%);
+      }
+    </style>
 </head>
 <body>
 
@@ -18,96 +26,144 @@
           <i class="fas fa-search"></i>
         </div>
         <i class="fas fa-bell notification-icon"></i>
-      </header>
-  <div class="container">
+    </header>
 
-    <div class="profile-section">
-        <img class="profile-img" src="/source/profile.png" alt="Profile">
-        <div class="user-info">
-            <h2><%= username %> <span class="vip-badge">VIP1</span></h2>
-            <p>Credit Score: <span class="score-bar"><span class="fill"></span></span> <b>100%</b></p>
-        </div>
+    <div class="container">
+
+      <div class="profile-section">
+          <img class="profile-img" src="/source/profile.png" alt="Profile">
+          <div class="user-info">
+              <h2><%= username %> <span class="vip-badge">VIP1</span></h2>
+              <p>Credit Score: <span class="score-bar"><span class="fill"></span></span> <b>100%</b></p>
+          </div>
+      </div>
+
+      <div class="wallet-section">
+          <h3>Wallet Account</h3>
+          <div class="wallet-balance" id="wallet" data-balance="<%= Number(balance).toFixed(2) %>">
+              <span class="amount"><strong>Current Balance:</strong> $<%= balance %> </span>
+          </div>
+
+          <div class="earnings-tabs">
+              <button class="active-tab">Todays Earnings</button>
+              <button>Total Earnings</button>
+          </div>
+
+          <div class="earnings-details">
+              <div>
+                  <p>Order Revenue</p>
+                  <strong>0</strong>
+              </div>
+              <div>
+                  <p>Total Earnings</p>
+                  <strong>0</strong>
+              </div>
+          </div>
+      </div>
+
+      <div class="bottom-sections">
+          <a href="/order-description" class="box-link">
+              <div class="box">
+                  <span>Order Description</span>
+              </div>
+          </a>
+          <a href="/note" class="box-link">
+              <div class="box">
+                  <span>Please Note</span>
+              </div>
+          </a>
+      </div>
+      
+      <div class="vip-card">
+          <span class="vip-badge">VIP1</span>
+          <span class="comm">Commx0.5%</span>
+      </div>
+
+      <div class="start-btn">
+        <!-- start disabled by default; JS will enable if balance >= 50 -->
+        <button id="startBtn" disabled>Mining (0/50)</button>
+      </div>
     </div>
 
-    <div class="wallet-section">
-        <h3>Wallet Account</h3>
-        <div class="wallet-balance">
-            <span class="amount"><strong>Current Balance:</strong> $<%= balance %> </span>
-            
-        </div>
-
-        <div class="earnings-tabs">
-            <button class="active-tab">Todays Earnings</button>
-            <button>Total Earnings</button>
-        </div>
-
-        <div class="earnings-details">
-            <div>
-                <p>Order Revenue</p>
-                <strong>0</strong>
-            </div>
-            <div>
-                <p>Total Earnings</p>
-                <strong>0</strong>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-sections">
-        <a href="/order-description" class="box-link">
-            <div class="box">
-                <span>Order Description</span>
-            </div>
-        </a>
-        <a href="/note" class="box-link">
-            <div class="box">
-                <span>Please Note</span>
-            </div>
-        </a>
-    </div>
-    
-    <div class="vip-card">
-        <span class="vip-badge">VIP1</span>
-        <span class="comm">Commx0.5%</span>
-    </div>
-
-    <div class="start-btn">
-        <button>Start (0/50)</button>
-    </div>
-
+    <%- include('partials/footer', { active: 'order' }) %> <!-- for order -->
 </body>
 </html>
 
-
 <script>
-  document.querySelector('.start-btn button').addEventListener('click', async () => {
-  try {
-    const response = await fetch('/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
+(function(){
+  const MIN_BAL = 50;
+  const startBtn = document.getElementById('startBtn');
+  const wallet   = document.getElementById('wallet');
+  const amountEl = document.querySelector('.wallet-balance .amount');
 
-    const data = await response.json();
-
-    if (response.ok) {
-      let alertMessage = `${data.message}\nYou earned $${data.profit}`;
-      if (data.isLucky) {
-        alertMessage += ` 🎊 (Lucky Order!)`;
-      }
-      alert(alertMessage);
-
-      document.querySelector('.wallet-balance .amount').innerHTML =
-        `<strong>Current Balance:</strong> $${data.updatedBalance}`;
-      document.querySelector('.start-btn button').innerText =
-        `Start (${50 - data.remaining}/50)`;
-    } else {
-      alert(data.message || 'Something went wrong.');
-    }
-  } catch (err) {
-    console.error(err);
-    alert('Server error.');
+  function getBalance(){
+    const v = wallet?.getAttribute('data-balance');
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
   }
-});
 
+  function setBalance(n){
+    const fixed = Number(n).toFixed(2);
+    wallet?.setAttribute('data-balance', fixed);
+    if (amountEl){
+      amountEl.innerHTML = `<strong>Current Balance:</strong> $${fixed}`;
+    }
+  }
+
+  function updateButtonState(){
+    const bal = getBalance();
+    const allowed = bal >= MIN_BAL;
+    startBtn.disabled = !allowed;
+    startBtn.title = allowed ? '' : `Need at least $${MIN_BAL.toFixed(2)} to start`;
+  }
+
+  // Initial check on load
+  updateButtonState();
+
+  startBtn.addEventListener('click', async () => {
+    // Client-side guard (extra safety)
+    if (getBalance() < MIN_BAL){
+      alert(`Your balance is below $${MIN_BAL}. Please deposit to start.`);
+      updateButtonState();
+      return;
+    }
+
+    // Prevent double click while request is in-flight
+    startBtn.disabled = true;
+
+    try {
+      const response = await fetch('/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        let alertMessage = `${data.message}`;
+        if (data.isLucky) alertMessage += ` `;
+        alert(alertMessage);
+
+        // Update balance in UI from server-truth
+        if (data.updatedBalance != null) {
+          setBalance(data.updatedBalance);
+        }
+
+        // Update remaining text if provided
+        if (typeof data.remaining === 'number') {
+            const orderCount = 50 - data.remaining;
+            startBtn.innerText = `Mining (${orderCount}/50)`;
+          }
+      } else {
+        alert(data.message || 'Something went wrong.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Server error.');
+    } finally {
+      // Re-evaluate button based on new/current balance
+      updateButtonState();
+    }
+  });
+})();
 </script>
-

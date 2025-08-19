@@ -51,6 +51,15 @@
       border-radius: 5px;
       margin-bottom: 20px;
     }
+    .alert {
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.alert.success { background: #d4edda; color: #155724; }
+.alert.error   { background: #f8d7da; color: #721c24; }
+
   </style>
 </head>
 <body>
@@ -71,6 +80,13 @@
       <p><strong>Current Balance:</strong> $<%= balance %> </p>
       <p><strong>Minimum Withdrawal:</strong> $100</p>
     </div>
+
+    <% if (message) { %>
+  <div class="alert <%= message.type %>">
+    <%= message.text %>
+  </div>
+<% } %>
+
 
     <form class="withdraw-info" method="POST" action="/withdraw">
 
