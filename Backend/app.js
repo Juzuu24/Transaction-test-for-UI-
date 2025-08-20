@@ -67,9 +67,8 @@ app.get("/", (req, res) => {
 });
 
 
-app.get("/dashboard", authMiddleware, (req, res) => {
-    res.render("dashboard", { title: "Dashboard", user: req.session.user });
-});
+// Dashboard route
+// Dashboard route - Get real data from your database
 
 
 app.get("/add-admin", (req, res) => {

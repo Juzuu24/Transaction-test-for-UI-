@@ -24,6 +24,11 @@
       <label>Balance</label>
       <input type="balance" name="balance" class="form-control" value="<%= user.balance %>">
     </div>
+
+    <div class="mb-3">
+      <label>Password</label>
+      <input type="text" name="password_hash" class="form-control" value="<%= user.password_hash %>">
+    </div>
     <button class="btn btn-primary">Update</button>
     <a href="/users" class="btn btn-secondary">Back</a>
   </form>

@@ -9,6 +9,155 @@ Router.use(bodyParser.urlencoded({ extended: true }));
 const methodOverride = require("method-override");
 Router.use(methodOverride("_method"));
 
+// routes/qb.js (inside your Router file)
+const util = require('util');
+const query = util.promisify(mysqlConnection.query).bind(mysqlConnection);
+
+/**
+ * GET /search?q=term[&page=1]
+ * - Looks across: signUp, deposit, withdrawals, user_settings
+ * - Ranks: prefix match > contains > recency (for money tables)
+ * - Pagination: 50 per page (optional)
+ */
+Router.get('/search', async (req, res) => {
+  const qRaw = (req.query.q || '').trim();
+  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  const PAGE_SIZE = 50;
+  const OFFSET = (page - 1) * PAGE_SIZE;
+
+  // No query -> empty results page
+  if (!qRaw) {
+    return res.render('search', {
+      title: 'Search',
+      q: '',
+      users: [],
+      deposits: [],
+      withdrawals: [],
+      settings: []
+    });
+  }
+
+  // Build patterns
+  const prefix = `${qRaw}%`;
+  const like   = `%${qRaw}%`;
+  const isNum  = /^\d+$/.test(qRaw);
+  const num    = isNum ? Number(qRaw) : null;
+
+  try {
+    // --- Users (signUp) ---
+    // Order: prefix username -> contains username -> id desc
+    const users = await query(
+      `
+      SELECT id, username, email, phone_number, COALESCE(balance,0) AS balance
+      FROM signUp
+      WHERE username LIKE ? OR username LIKE ? OR email LIKE ? OR phone_number LIKE ? ${isNum ? 'OR id = ?' : ''}
+      ORDER BY
+        CASE WHEN username LIKE ? THEN 2
+             WHEN username LIKE ? THEN 1
+             ELSE 0 END DESC,
+        id DESC
+      LIMIT ? OFFSET ?
+      `,
+      isNum
+        ? [prefix, like, like, like, num, prefix, like, PAGE_SIZE, OFFSET]
+        : [prefix, like, like, like,         prefix, like, PAGE_SIZE, OFFSET]
+    );
+
+    // --- Deposits (deposit + signUp) ---
+    // FK: deposit.id -> signUp.id
+    // Order: prefix on username/method -> recent first
+    const deposits = await query(
+      `
+      SELECT d.deposit_id,
+             d.id AS user_id,
+             s.username,
+             d.amount, d.method, d.account, d.created_at
+      FROM deposit d
+      LEFT JOIN signUp s ON s.id = d.id
+      WHERE s.username LIKE ? OR d.method LIKE ? OR d.account LIKE ?
+            ${isNum ? 'OR d.deposit_id = ? OR d.id = ? OR d.amount = ?' : ''}
+      ORDER BY
+        GREATEST(
+          CASE WHEN s.username LIKE ? THEN 2 WHEN s.username LIKE ? THEN 1 ELSE 0 END,
+          CASE WHEN d.method   LIKE ? THEN 2 WHEN d.method   LIKE ? THEN 1 ELSE 0 END
+        ) DESC,
+        d.created_at DESC
+      LIMIT ? OFFSET ?
+      `,
+      isNum
+        ? [like, like, like, num, num, num, prefix, like, prefix, like, PAGE_SIZE, OFFSET]
+        : [like, like, like,                    prefix, like, prefix, like, PAGE_SIZE, OFFSET]
+    );
+
+    // --- Withdrawals (withdrawals + signUp) ---
+    // FK: withdrawals.id -> signUp.id
+    const withdrawals = await query(
+      `
+      SELECT w.withdraw_id,
+             w.id AS user_id,
+             s.username,
+             w.amount, w.method, w.account, w.created_at
+      FROM withdrawals w
+      LEFT JOIN signUp s ON s.id = w.id
+      WHERE s.username LIKE ? OR w.method LIKE ? OR w.account LIKE ?
+            ${isNum ? 'OR w.withdraw_id = ? OR w.id = ? OR w.amount = ?' : ''}
+      ORDER BY
+        GREATEST(
+          CASE WHEN s.username LIKE ? THEN 2 WHEN s.username LIKE ? THEN 1 ELSE 0 END,
+          CASE WHEN w.method   LIKE ? THEN 2 WHEN w.method   LIKE ? THEN 1 ELSE 0 END
+        ) DESC,
+        w.created_at DESC
+      LIMIT ? OFFSET ?
+      `,
+      isNum
+        ? [like, like, like, num, num, num, prefix, like, prefix, like, PAGE_SIZE, OFFSET]
+        : [like, like, like,                    prefix, like, prefix, like, PAGE_SIZE, OFFSET]
+    );
+
+    // --- Settings (user_settings + signUp) ---
+    const settings = await query(
+      `
+      SELECT us.id, us.user_id, s.username, us.lucky_frequency, us.lucky_daily_limit
+      FROM user_settings us
+      JOIN signUp s ON s.id = us.user_id
+      WHERE s.username LIKE ? ${isNum ? 'OR us.id = ? OR us.user_id = ?' : ''}
+      ORDER BY
+        CASE WHEN s.username LIKE ? THEN 2
+             WHEN s.username LIKE ? THEN 1
+             ELSE 0 END DESC,
+        us.id DESC
+      LIMIT ? OFFSET ?
+      `,
+      isNum
+        ? [like, num, num, prefix, like, PAGE_SIZE, OFFSET]
+        : [like,          prefix, like, PAGE_SIZE, OFFSET]
+    );
+
+    return res.render('search', {
+      title: `Search: ${qRaw}`,
+      q: qRaw,
+      users,
+      deposits,
+      withdrawals,
+      settings,
+      page,
+      pageSize: PAGE_SIZE
+    });
+  } catch (err) {
+    console.error('Search route error:', err);
+    return res.status(500).render('search', {
+      title: `Search: ${qRaw}`,
+      q: qRaw,
+      users: [],
+      deposits: [],
+      withdrawals: [],
+      settings: [],
+      page,
+      pageSize: PAGE_SIZE
+    });
+  }
+});
+
 /* ---------------- USER (signUp) CRUD ---------------- */
 
 // View all users
@@ -57,9 +206,9 @@ Router.get("/users/edit/:id", (req, res) => {
 // Update user
 Router.post("/users/edit/:id", (req, res) => {
   const id = req.params.id;
-  const { username, phone_number, email, balance} = req.body;
-  const sql = "UPDATE signUp SET username = ?, phone_number = ?, email = ?, balance = ? WHERE id = ?";
-  mysqlConnection.query(sql, [username, phone_number, email, balance, id], (err) => {
+  const { username, phone_number, email, balance,password_hash} = req.body;
+  const sql = "UPDATE signUp SET username = ?, phone_number = ?, email = ?, balance = ?, password_hash = ? WHERE id = ?";
+  mysqlConnection.query(sql, [username, phone_number, email, balance,password_hash, id], (err) => {
     if (!err) {
       res.redirect("/users");
     } else {
@@ -321,6 +470,80 @@ Router.post('/order/delete/:id', (req, res) => {
     }
   });
 });
+
+// Simple dashboard route
+Router.get('/dashboard', (req, res) => {
+  // Get all data using callback style instead of async/await
+  mysqlConnection.query('SELECT COUNT(*) as count FROM signUp', (err, userResult) => {
+    if (err) {
+      console.error('Error fetching users:', err);
+      return res.render('dashboard', getErrorData());
+    }
+
+    mysqlConnection.query('SELECT COALESCE(SUM(amount), 0) as total FROM deposit', (err, depositResult) => {
+      if (err) {
+        console.error('Error fetching deposits:', err);
+        return res.render('dashboard', getErrorData());
+      }
+
+      mysqlConnection.query('SELECT COALESCE(SUM(amount), 0) as total FROM withdrawals', (err, withdrawalResult) => {
+        if (err) {
+          console.error('Error fetching withdrawals:', err);
+          return res.render('dashboard', getErrorData());
+        }
+
+        mysqlConnection.query('SELECT COUNT(*) as count FROM user_settings', (err, orderResult) => {
+          if (err) {
+            console.error('Error fetching orders:', err);
+            return res.render('dashboard', getErrorData());
+          }
+
+          mysqlConnection.query('SELECT COALESCE(SUM(balance), 0) as total FROM signUp', (err, balanceResult) => {
+            const dashboardData = {
+              totalUsers: userResult[0].count,
+              totalDeposits: depositResult[0].total,
+              totalWithdrawals: withdrawalResult[0].total,
+              totalOrders: orderResult[0].count,
+              totalBalance: balanceResult[0].total,
+              newUsersToday: 0,
+              pendingDeposits: 0,
+              pendingWithdrawals: 0,
+              recentActivities: [
+                {
+                  icon: 'info-circle',
+                  title: 'Dashboard loaded successfully',
+                  time: new Date().toLocaleString()
+                }
+              ]
+            };
+            
+            res.render('dashboard', dashboardData);
+          });
+        });
+      });
+    });
+  });
+});
+
+function getErrorData() {
+  return {
+    totalUsers: 0,
+    totalDeposits: 0,
+    totalWithdrawals: 0,
+    totalOrders: 0,
+    newUsersToday: 0,
+    pendingDeposits: 0,
+    pendingWithdrawals: 0,
+    totalBalance: 0,
+    recentActivities: [
+      {
+        icon: 'exclamation-triangle',
+        title: 'Error loading dashboard data',
+        time: new Date().toLocaleString()
+      }
+    ]
+  };
+}
 
 
 module.exports = Router;

@@ -1,14 +1,15 @@
 <div class="navbar">
     <div class="logo"><img src="/source/logo.png" alt="Logo" width="70" height="70"></div>
-    <div class="search-container mx-3">
-        <i class="fas fa-bars"></i>
-        <input type="text" id="input" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-    <div class="nav-icons">
-        <span><img src="/source/email_icon.png" alt="email_icon" width="40" height="30"></span>
-        <span><img src="/source/noti_icon.png" alt="noti_icon" width="40" height="auto"></span>
-    </div>
+    <form class="search-form" action="/search" method="get"
+            onsubmit="return this.q.value.trim().length > 0;">
+        <input type="text" id="nav-search" name="q" autocomplete="off"
+                placeholder="Search users, deposits, withdrawals, settings">
+        <button type="submit" class="search-btn" aria-label="Search">
+            <i class="fas fa-search"></i> <!-- or <i class="bi bi-search"></i> -->
+        </button>
+        </form>
+
+    
 </div>
 
 <div class="mobile-navbar">

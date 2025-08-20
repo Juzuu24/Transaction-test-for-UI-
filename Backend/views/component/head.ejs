@@ -3,327 +3,282 @@
 <title>PRODUCTS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="/style.css">
+
+<!-- put this in component/head.ejs -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      crossorigin="anonymous" referrerpolicy="no-referrer">
+
 <style>
-        body {
-        font-family: playfair display;
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Playfair Display', serif;
         margin: 0;
         padding: 0;
-        /* width: 100%; */
         background-color: #f0f0f0;
+        min-height: 100vh;
+        padding-top: 80px; /* Space for fixed navbar */
     }
 
+    /* Navbar Styles */
     .navbar {
         background-color: #78B4F0;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        flex-wrap: nowrap;
-        padding: 5px 10px;
+        padding: 5px 20px;
         border-bottom: 1px solid black;
         position: fixed;
-        box-sizing: border-box;
-        width: 100%;
-        
-    }
-    .mobile-navbar{
-        
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        /* border: 1px solid black; */
-        padding-top: 90px;
-        padding-left: 20px;
-        padding-right: 20px;
-        
-    }
-    .menu-toggle{
-        font-size: 20px;
-        cursor: pointer;
-        text-decoration: none;
-        color: #0F3DDE;
-        position: fixed;
-        padding-top: 30px;
-    } 
-    /* .sidebar{
-        display: none;
-    } */
-    /* #addButton{
-        position: fixed;
-    top: 60px; 
-    right: 10;
-        padding-top: 20px;
-        text-align: center;
-        padding-right: 20px;
-    } */
-    /* text-decoration: none;
-        position: fixed;
-        color: #0F3DDE;
-        right: 0;
-        padding-top: 40px;
-        padding-right: 20px; */
-        #addButton {
-            position: fixed; /* Change to absolute or relative based on parent container */
-            top: 0; /* Align with the logout button */
-            right: 100px; /* Adjust distance from logout button */
-            padding: 8px 18px;
-            text-align: center;
-            /* background-color: #0F3DDE; Example background */
-            color: yellow; /* Example text color */
-            border-radius: 10px;
-            margin-top: 80px;
-        }
-
-    .sidebar { 
-        position: fixed;
-        left: -250px;
-        width: 200px;
-        background-color: #f8f8f8;
-        padding: 20px;
-        height: 100vh;
-        transition: left ease-in-out;
-        top:0;
-    }  
-    .log{
-        text-decoration: none;
-        position: fixed;
-        color: #0F3DDE;
-        right: 0;
-        padding-top: 30px;
-        padding-right: 20px;
-    }
-    .close-btn {
-        font-size: 20px;
-        cursor: pointer;
-        position: absolute;
-        top: 20px;
-        right: 15px;
-        color:gray;
-    }
-
-    /* .sidebar {
-        /* position: fixed; */
-        /* top: 0; */
-        /* left: -250px; */
-        /* width: 250px;
-        height: 100vh;
-        background: white;
-        padding: 20px; */
-        /* transition: 0.3s; */
-        /* box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); */
-        
-    @media (min-width: 768px) {
-            .menu-toggle {
-            display: none; /* Hide toggle on desktop */
-    }
-    .log{
-        display: none;
-
-    }
-    .sidebar { 
+        top: 0;
         left: 0;
-        width: 200px;
-        position: fixed;
-        background-color: #f8f8f8;
-        padding: 20px;
-        height: 100vh;
-        top: 100px;
-    } 
-    .close-btn{
-        display: none;
+        right: 0;
+        z-index: 1000;
+        height: 80px;
     }
-
-    }
-    h2{
-        color: #0F3DDE;
-    }
-    .sidebar h2 {
-        margin-bottom: 20px;
-        color: #0F3DDE;
-    }
-    .sidebar a {
-        display: block;
-        padding: 10px;
-        text-decoration: none;
-        color: #333;
-        border-radius: 5px;
-        margin-bottom: 5px;
-    }
-
-    .sidebar a:hover, .sidebar a.active{
-        background-color: #e0e0e0;
-    }
-    .sidebar.active {
-        left: 0;
-    }
-    /* .container {
-        width: 100%;
-        max-width: 100%;
-    } */
 
     .navbar .logo img {
-        margin-right: 20px;
+        margin-right: 15px;
     }
 
-    .navbar .search-bar {
+    .search-form {
         flex-grow: 1;
         display: flex;
         align-items: center;
         background-color: white;
-        border-radius: 5px;
-        padding: 5px;
+        border-radius: 25px;
+        padding: 5px 15px;
+        margin: 0 20px;
+        max-width: 500px;
     }
 
-    .navbar .search-bar input {
+    .search-form input {
         border: none;
         outline: none;
-        padding: 5px;
+        padding: 8px;
         flex-grow: 1;
+        background: transparent;
+        width: 100%;
     }
 
-    .navbar .search-bar button {
-        background-color: #ddd;
+    .search-btn {
+        background: none;
         border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 5px;
         cursor: pointer;
+        color: #666;
     }
 
-    .navbar .nav-icons span {
-        margin-left: 20px;
-        
-    }
-    .nav-icons{
+    .nav-icons {
         display: flex;
         align-items: center;
+        gap: 15px;
     }
 
-    .main-container {
-        display: flex;
-        padding-top: 20px;
+    /* Mobile Navbar */
+    .mobile-navbar {
+        display: none;
+        padding: 15px 20px;
+        background-color: #f8f8f8;
+        border-bottom: 1px solid #ddd;
     }
 
+    .menu-toggle {
+        font-size: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #0F3DDE;
+        padding: 10px;
+        background-color: #f8f8f8;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        position: fixed;
+        left: -250px;
+        width: 250px;
+        background-color: #f8f8f8;
+        padding: 20px;
+        height: calc(100vh - 80px);
+        transition: left 0.3s ease-in-out;
+        top: 80px;
+        z-index: 999;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+
+    .close-btn {
+        font-size: 20px;
+        cursor: pointer;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        color: gray;
+        background: none;
+        border: none;
+        padding: 5px;
+    }
 
     .sidebar h2 {
-        margin-bottom: 20px;
         color: #0F3DDE;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
     }
 
     .sidebar a {
         display: block;
-        padding: 10px;
+        padding: 12px 15px;
         text-decoration: none;
         color: #333;
         border-radius: 5px;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
     }
 
-    .sidebar a:hover, .sidebar a.active{
+    .sidebar a:hover,
+    .sidebar a.active {
         background-color: #e0e0e0;
+        border-left-color: #0F3DDE;
     }
 
+    /* Content Area */
     .content {
-        flex-grow: 1;
-        /* padding-top: 20px; */
-        /* top: 10px; */
-        padding-left: 120px;
-        text-align: center;
-        /* padding-right: 40px; */
-        padding-top: 20px;
-        /* display: flex;
-        justify-content: center; */
-    }
-    .product{
-        text-align: center;
-        margin-top: 20px;
-        margin-left: 150px;
-    }
-    .tablestyle {
-        margin-left: 60px;
+        padding: 30px 20px;
+        margin-left: 0;
+        transition: margin-left 0.3s ease;
+        width: 100%;
+        min-height: calc(100vh - 80px);
     }
 
+    /* Table Styles */
+    .table-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-top: 20px;
+        padding: 20px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
 
     table {
-        width: 70%;
-        height: 30%;
-        margin: 10px auto;
-        border-collapse: separate;
-        border: 2px solid black;
-        border-spacing: 7px;
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
     }
+
     th, td {
-        border: 1px solid black;
-        padding: 12px;
-        text-align: center;
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        white-space: nowrap;
     }
+
     th {
-        background-color: black;
-        color: white;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+        position: sticky;
+        top: 0;
     }
 
-    img {
-        margin-right: 15px;
-        object-fit: cover;
-        border-radius: 5px;
+    tbody tr:hover {
+        background-color: #f8f9fa;
     }
 
-    .buttons {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .buttons button {
-        background-color: #62A4E6;
-        color: #FFEB0B;
-        font-family: 'Playfair Display', serif;
-        font-size: 20px;
-        padding: 10px 50px;
-        border: none;
-        cursor: pointer;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px black;
-        margin: 20px;
+    /* Responsive Design */
+    @media (min-width: 768px) {
+        .menu-toggle {
+            display: none;
+        }
         
-    }
-    .action{
-        color: #62A4E6;
-        text-decoration: none;
-        /* color: #FFEB0B; */
+        .mobile-navbar {
+            display: none;
+        }
+        
+        .sidebar {
+            left: 0;
+        }
+        
+        .close-btn {
+            display: none;
+        }
+        
+        .content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
     }
 
-    .buttons button:hover {
-        background-color: #508ACF;
-    }
-
-    .dashboard-header {
-            display: flex;
-            justify-content: center;
-            padding-top: 10px;
-            padding-bottom: 30px;
-    }
-    .search {
-            left: 20%;
-            border-radius: 20px;
-    }
-    .search-container {
-            display: flex;
-            align-items: center;
-            background: #f0eef4;
-            padding: 5px 10px;
-            border-radius: 20px;
-    }
-    .search-container input {
-            border: none;
-            outline: none;
-            background: transparent;
-            padding: 5px;
-            width: 100%;
-    }
-    .search-container .fa-search {
-            color: gray;
-    }
-    .form-control {
-            width: 80%;
+    @media (max-width: 767px) {
+        .search-form {
+            margin: 0 10px;
             max-width: 300px;
-            margin: auto;
+        }
+        
+        .navbar {
+            padding: 5px 10px;
+        }
+        
+        .mobile-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            z-index: 998;
+            height: 60px;
+        }
+        
+        body {
+            padding-top: 140px; /* Navbar + mobile navbar height */
+        }
+        
+        .content {
+            padding-top: 20px;
+        }
+    }
+
+    /* Active states */
+    .sidebar.active {
+        left: 0;
+    }
+
+    /* Button styles */
+    .btn-group {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .btn-sm {
+        padding: 5px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    /* Header styles */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .page-header h2 {
+        margin: 0;
+        color: #0F3DDE;
     }
 </style>
