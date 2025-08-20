@@ -5,11 +5,9 @@ const path = require("path");
 const session = require("express-session");
 const Authen = require("./control/authen");
 const MySQLStore = require("express-mysql-session")(session);
-const { db } = require("./utils/database"); // Assuming you export 'db' directly
+const { db } = require("./utils/database");
 const { dbConfig } = require("./utils/database");
 const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt');
-
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -25,56 +23,53 @@ function generateInviteCode() {
 
 // Enhanced CORS configuration
 app.use(cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-    exposedHeaders: ['set-cookie']
+  origin: "http://localhost:3000",
+  credentials: true,
+  exposedHeaders: ['set-cookie']
 }));
-
-
-
 
 // Session store with enhanced configuration
 const sessionStore = new MySQLStore({
-    ...dbConfig,
-    clearExpired: true,
-    checkExpirationInterval: 900000,
-    schema: {
-        tableName: 'sessions',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
-        }
+  ...dbConfig,
+  clearExpired: true,
+  checkExpirationInterval: 900000,
+  schema: {
+    tableName: 'sessions',
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data'
     }
+  }
 });
 
 // Session error handling
 sessionStore.on('error', (error) => {
-    console.error('SESSION STORE ERROR:', error);
+  console.error('SESSION STORE ERROR:', error);
 });
 
 // Enhanced session middleware
 app.use(session({
-    name: 'transaction.sid',
-    secret: "jklfsodifjsktnwjasdp465dd",
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    cookie: {
-        maxAge: 3600000, // 1 hour
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: false,
-        path: '/'
-    }
+  name: 'transaction.sid',
+  secret: "jklfsodifjsktnwjasdp465dd",
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+  rolling: true,
+  cookie: {
+    maxAge: 3600000,
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false,
+    path: '/'
+  }
 }));
 
 // Session debugging middleware
 app.use((req, res, next) => {
-    console.log('Session ID:', req.sessionID);
-    console.log('Session:', JSON.stringify(req.session, null, 2));
-    next();
+  console.log('Session ID:', req.sessionID);
+  console.log('Session:', JSON.stringify(req.session, null, 2));
+  next();
 });
 
 app.use((req, res, next) => {
@@ -96,50 +91,56 @@ app.set("views", path.join(__dirname, "views"));
 
 // Authentication middleware
 const requireAuth = (req, res, next) => {
-    if (!req.session.authenticated) {
-        console.log('Auth failed - session:', req.session);
-        return res.redirect('/');
-    }
-    next();
+  if (!req.session.authenticated) {
+    console.log('Auth failed - session:', req.session);
+    return res.redirect('/');
+  }
+  next();
 };
 
 // Routes
 app.get("/", (req, res) => {
-    if (req.session.authenticated) {
-        return res.redirect('/dashboard');
-    }
-    res.render("login", { error: null });
+  if (req.session.authenticated) {
+    return res.redirect('/dashboard');
+  }
+  res.render("login", { error: null });
 });
 
-
+// Fix: Change password to password_hash
 app.post("/login", async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const loginResult = await Authen.userLogin(req, res, username, password);
+  try {
+    const { username, password } = req.body;
+    // Check if username and password match a user in the database using password_hash
+    const [rows] = await db.execute(
+      'SELECT id, username FROM signUp WHERE username = ? AND password_hash = ?',
+      [username, password]
+    );
 
-        if (loginResult) {
-            res.redirect("/dashboard");
-        } else {
-            res.render('login', { title: 'Login', errorMessage: 'Invalid username or password' });
-        }
-
-    } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).render('login', { title: 'Login', errorMessage: 'An error occurred during login.' });
+    if (rows.length > 0) {
+      // User authenticated
+      const user = rows[0];
+      req.session.authenticated = true;
+      req.session.userId = user.id;
+      req.session.username = user.username;
+      res.redirect("/dashboard");
+    } else {
+      // Authentication failed
+      res.render('login', { title: 'Login', errorMessage: 'Invalid username or password' });
     }
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).render('login', { title: 'Login', errorMessage: 'An error occurred during login.' });
+  }
 });
 
 
 global.liveMarkets = [
   { symbol: 'BTC/USDT', price: 115549.80, open: 115549.80, icon: '/source/bitcoin.png' },
-  { symbol: 'ETH/USDT', price: 4342.18,  open: 4342.18,  icon: '/source/bitcoin.png' },
-  { symbol: 'DOGE/USDT',price: 0.226099, open: 0.226099, icon: '/source/bitcoin.png' },
-  { symbol: 'BCH/USDT', price: 571.02,   open: 571.02,   icon: '/source/bitcoin.png' },
-  { symbol: 'LTC/USDT', price: 117.15,   open: 117.15,   icon: '/source/bitcoin.png' },
+  { symbol: 'ETH/USDT', price: 4342.18, open: 4342.18, icon: '/source/bitcoin.png' },
+  { symbol: 'DOGE/USDT', price: 0.226099, open: 0.226099, icon: '/source/bitcoin.png' },
+  { symbol: 'BCH/USDT', price: 571.02, open: 571.02, icon: '/source/bitcoin.png' },
+  { symbol: 'LTC/USDT', price: 117.15, open: 117.15, icon: '/source/bitcoin.png' },
 ];
-
-
-
 
 app.get("/dashboard", requireAuth, async (req, res) => {
   try {
@@ -155,25 +156,22 @@ app.get("/dashboard", requireAuth, async (req, res) => {
       return res.status(404).send('User not found');
     }
 
-    // Get CashIn (Deposit) for current month
     const [depositResult] = await db.execute(`
       SELECT IFNULL(SUM(amount), 0) AS monthlyCashIn
       FROM deposit
       WHERE id = ?
-        AND MONTH(created_at) = MONTH(CURRENT_DATE())
-        AND YEAR(created_at)  = YEAR(CURRENT_DATE())
+      AND MONTH(created_at) = MONTH(CURRENT_DATE())
+      AND YEAR(created_at) = YEAR(CURRENT_DATE())
     `, [req.session.userId]);
 
-    // Get CashOut (Withdraw) for current month
     const [withdrawResult] = await db.execute(`
       SELECT IFNULL(SUM(amount), 0) AS monthlyCashOut
       FROM withdrawals
       WHERE id = ?
-        AND MONTH(created_at) = MONTH(CURRENT_DATE())
-        AND YEAR(created_at)  = YEAR(CURRENT_DATE())
+      AND MONTH(created_at) = MONTH(CURRENT_DATE())
+      AND YEAR(created_at) = YEAR(CURRENT_DATE())
     `, [req.session.userId]);
 
-    // ✅ Fix: ensure markets is defined
     const markets = Array.isArray(global.liveMarkets) ? global.liveMarkets : [];
 
     res.render("dashboard", {
@@ -191,12 +189,11 @@ app.get("/dashboard", requireAuth, async (req, res) => {
   }
 });
 
-
 app.get('/signup', (req, res) => {
-    res.render('signup');
-  });
+  res.render('signup');
+});
 
-// POST route to handle signup form submission
+// Fix: Change password to password_hash
 app.post('/signup', async (req, res) => {
   const { username, phone_number, email, password, confirmPassword } = req.body;
 
@@ -205,12 +202,10 @@ app.post('/signup', async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insert user into DB
+    // Insert user into DB with plain text password using password_hash column
     await db.execute(
       'INSERT INTO signUp (username, phone_number, email, password_hash) VALUES (?, ?, ?, ?)',
-      [username, phone_number, email, hashedPassword]
+      [username, phone_number, email, password]
     );
 
     res.redirect('/');
@@ -220,28 +215,27 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-  
 
 app.get("/deposit", requireAuth, async (req, res) => {
-    try {
-        console.log('Accessing deposit with session:', req.session);
+  try {
+    console.log('Accessing deposit with session:', req.session);
 
-        const [results] = await db.execute('SELECT balance FROM signUp WHERE id = ?', [req.session.userId]);
+    const [results] = await db.execute('SELECT balance FROM signUp WHERE id = ?', [req.session.userId]);
 
-        if (results.length === 0) {
-            console.log(`User with ID ${req.session.userId} not found.`);
-            return res.status(404).send('User not found');
-        }
-
-        res.render('deposit', {
-            balance: results[0].balance,
-            user: req.session.username
-        });
-
-    } catch (err) {
-        console.error('Error fetching balance for deposit:', err);
-        return res.status(500).send('Database error fetching balance');
+    if (results.length === 0) {
+      console.log(`User with ID ${req.session.userId} not found.`);
+      return res.status(404).send('User not found');
     }
+
+    res.render('deposit', {
+      balance: results[0].balance,
+      user: req.session.username
+    });
+
+  } catch (err) {
+    console.error('Error fetching balance for deposit:', err);
+    return res.status(500).send('Database error fetching balance');
+  }
 });
 
 app.post("/deposit", requireAuth, async (req, res) => {
@@ -263,7 +257,6 @@ app.post("/deposit", requireAuth, async (req, res) => {
       return res.status(400).send('Balance update failed');
     }
 
-    // ⬇⬇ Instead of JSON, redirect to dashboard/home
     res.redirect("/dashboard");
 
   } catch (err) {
@@ -274,25 +267,25 @@ app.post("/deposit", requireAuth, async (req, res) => {
 
 
 app.get("/withdraw", requireAuth, async (req, res) => {
-    try {
-        console.log('Accessing withdraw with session:', req.session);
+  try {
+    console.log('Accessing withdraw with session:', req.session);
 
-        const [results] = await db.execute('SELECT balance FROM signUp WHERE id = ?', [req.session.userId]);
+    const [results] = await db.execute('SELECT balance FROM signUp WHERE id = ?', [req.session.userId]);
 
-        if (results.length === 0) {
-            console.log(`User with ID ${req.session.userId} not found.`);
-            return res.status(404).send('User not found');
-        }
-
-        res.render('withdraw', {
-            balance: results[0].balance,
-            user: req.session.username
-        });
-
-    } catch (err) {
-        console.error('Error fetching balance for withdraw:', err);
-        return res.status(500).send('Database error fetching balance');
+    if (results.length === 0) {
+      console.log(`User with ID ${req.session.userId} not found.`);
+      return res.status(404).send('User not found');
     }
+
+    res.render('withdraw', {
+      balance: results[0].balance,
+      user: req.session.username
+    });
+
+  } catch (err) {
+    console.error('Error fetching balance for withdraw:', err);
+    return res.status(500).send('Database error fetching balance');
+  }
 });
 
 app.post("/withdraw", requireAuth, async (req, res) => {
@@ -300,20 +293,17 @@ app.post("/withdraw", requireAuth, async (req, res) => {
     const userId = req.session.userId;
     const { amount, method, account } = req.body;
 
-    // Parse + validate
     const amt = Number(amount);
     if (!Number.isFinite(amt) || amt <= 0) {
       req.session.message = { type: "error", text: "Please enter a valid withdrawal amount." };
       return req.session.save(() => res.redirect("/withdraw"));
     }
 
-    // (Optional) enforce your UI min: 100
     if (amt < 100) {
       req.session.message = { type: "error", text: "Minimum withdrawal is $100." };
       return req.session.save(() => res.redirect("/withdraw"));
     }
 
-    // Get balance
     const [rows] = await db.execute('SELECT balance FROM signUp WHERE id = ?', [userId]);
     if (!rows.length) {
       req.session.message = { type: "error", text: "User not found." };
@@ -322,19 +312,16 @@ app.post("/withdraw", requireAuth, async (req, res) => {
 
     const currentBalance = Number(rows[0].balance) || 0;
 
-    // Insufficient balance
     if (currentBalance <= 0 || currentBalance < amt) {
       req.session.message = { type: "error", text: "Insufficient balance! Please deposit first." };
       return req.session.save(() => res.redirect("/withdraw"));
     }
 
-    // Record withdrawal
     await db.execute(
       'INSERT INTO withdrawals (id, amount, method, account) VALUES (?, ?, ?, ?)',
       [userId, amt, method, account]
     );
 
-    // Update balance
     const [updateResult] = await db.execute(
       'UPDATE signUp SET balance = balance - ? WHERE id = ?',
       [amt, userId]
@@ -345,7 +332,6 @@ app.post("/withdraw", requireAuth, async (req, res) => {
       return req.session.save(() => res.redirect("/withdraw"));
     }
 
-    // Success
     req.session.message = { type: "success", text: "Withdrawal successful!" };
     return req.session.save(() => res.redirect("/dashboard"));
 
@@ -356,20 +342,17 @@ app.post("/withdraw", requireAuth, async (req, res) => {
   }
 });
 
-
-
 app.get("/checkin", (req, res) => {
-    res.render("checkin", { title: "Check In", errorMessage: "" });
+  res.render("checkin", { title: "Check In", errorMessage: "" });
 });
 
 app.get("/event", (req, res) => {
-    res.render("event", { 
-        title: "Event", 
-        errorMessage: "",
-        dashboardUrl: "/dashboard"  // <-- add this line
-    });
+  res.render("event", {
+    title: "Event",
+    errorMessage: "",
+    dashboardUrl: "/dashboard"
+  });
 });
-
 
 app.get('/transactions', async (req, res, next) => {
   try {
@@ -377,7 +360,6 @@ app.get('/transactions', async (req, res, next) => {
     const { search = '', type = '' } = req.query;
     const like = `%${search}%`;
 
-    // Query withdrawals only if type is empty or 'Withdraw'
     let withdraws = [];
     if (type === '' || type === 'Withdraw') {
       const wQuery = `
@@ -395,7 +377,6 @@ app.get('/transactions', async (req, res, next) => {
       }));
     }
 
-    // Query deposits only if type is empty or 'Deposit'
     let deposits = [];
     if (type === '' || type === 'Deposit') {
       const dQuery = `
@@ -427,31 +408,27 @@ app.get('/transactions', async (req, res, next) => {
   }
 });
 
-
-
-
 app.get("/order", requireAuth, async (req, res) => {
-    try {
-        console.log('Accessing withdraw with session:', req.session);
+  try {
+    console.log('Accessing order with session:', req.session);
 
-        const [results] = await db.execute('SELECT username,balance FROM signUp WHERE id = ?', [req.session.userId]);
-        
+    const [results] = await db.execute('SELECT username,balance FROM signUp WHERE id = ?', [req.session.userId]);
 
-        if (results.length === 0) {
-            console.log(`User with ID ${req.session.userId} not found.`);
-            return res.status(404).send('User not found');
-        }
-
-        res.render('order', {
-            username:results[0].username,
-            balance: results[0].balance,
-            user: req.session.username
-        });
-
-    } catch (err) {
-        console.error('Error fetching balance for order:', err);
-        return res.status(500).send('Database error fetching balance');
+    if (results.length === 0) {
+      console.log(`User with ID ${req.session.userId} not found.`);
+      return res.status(404).send('User not found');
     }
+
+    res.render('order', {
+      username: results[0].username,
+      balance: results[0].balance,
+      user: req.session.username
+    });
+
+  } catch (err) {
+    console.error('Error fetching balance for order:', err);
+    return res.status(500).send('Database error fetching balance');
+  }
 });
 
 app.post('/order', async (req, res) => {
@@ -461,25 +438,22 @@ app.post('/order', async (req, res) => {
 
     console.log('🟡 Incoming order from user ID:', userId);
 
-    // Fetch current balance (server truth)
     const [[{ balance: balStr }]] = await db.query(
       'SELECT balance FROM signUp WHERE id = ?',
       [userId]
     );
     const currentBalance = parseFloat(balStr);
 
-    // Require at least $50 balance to be able to start
     if (!Number.isFinite(currentBalance) || currentBalance < 50) {
       return res.status(403).json({
         message: '❌ Your balance must be at least $50 to start an order.'
       });
     }
 
-    // Check how many orders today
     const [[{ count: countToday }]] = await db.query(
       `SELECT COUNT(*) AS count
-       FROM start_actions
-       WHERE id = ? AND DATE(action_time) = CURDATE()`,
+      FROM start_actions
+      WHERE id = ? AND DATE(action_time) = CURDATE()`,
       [userId]
     );
     console.log('🔢 Orders today:', countToday);
@@ -488,11 +462,10 @@ app.post('/order', async (req, res) => {
       return res.status(403).json({ message: 'Daily limit reached (50/50)' });
     }
 
-    // Lucky settings (kept as your logic)
     const [settingsRows] = await db.query(
       `SELECT lucky_frequency, lucky_daily_limit
-       FROM user_settings
-       WHERE user_id = ?`,
+      FROM user_settings
+      WHERE user_id = ?`,
       [userId]
     );
     const settingsMap = Object.fromEntries(settingsRows.map(r => [r.key_name, r.val]));
@@ -501,18 +474,15 @@ app.post('/order', async (req, res) => {
 
     const [[{ todayLuckyCount }]] = await db.query(
       `SELECT COUNT(*) AS todayLuckyCount
-       FROM start_actions
-       WHERE id = ? AND isLucky = 1 AND DATE(action_time) = CURDATE()`,
+      FROM start_actions
+      WHERE id = ? AND isLucky = 1 AND DATE(action_time) = CURDATE()`,
       [userId]
     );
 
-    // Determine if this click would be lucky
     let isLuckyPlanned =
       (countToday + 1) % luckyFrequency === 0 &&
       todayLuckyCount < luckyDailyLimit;
 
-    // ----- LUCKY HOLD LOGIC -----
-    // If there's an active hold, enforce it: block clicks until extra $50 is deposited
     const hold = req.session.luckyHold;
     if (hold?.active) {
       const required = Number(hold.required ?? 50);
@@ -524,19 +494,17 @@ app.post('/order', async (req, res) => {
           code: 'LUCKY_HOLD'
         });
       } else {
-        // User has deposited enough since the hold was set — unlock and force lucky this time
         console.log('✅ Lucky hold satisfied. Granting lucky bonus now.');
         req.session.luckyHold = null;
-        isLuckyPlanned = true; // force lucky payout now
+        isLuckyPlanned = true;
       }
     }
 
-    // If a NEW lucky hit is planned and no active hold: set hold and block this click
     if (isLuckyPlanned && !hold?.active) {
       req.session.luckyHold = {
         active: true,
-        baseline: currentBalance,  // balance at the time of hold
-        required: 50,              // must increase by $50
+        baseline: currentBalance,
+        required: 50,
         setAt: new Date().toISOString()
       };
       console.log('⛔ Lucky hit blocked. Hold set. Ask user to deposit +$50 to claim.');
@@ -546,13 +514,9 @@ app.post('/order', async (req, res) => {
       });
     }
 
-    // ─── PROFIT LOGIC ───────────────────────────────
-    // Non-lucky: 0.5, 1.0, 1.5, ... (0.5 * orderNumberToday)
-    // Lucky now (after hold cleared): flat $200
     const baseProfit = 0.5 * (countToday + 1);
     let profit = isLuckyPlanned ? 200 : baseProfit;
     profit = Number(profit.toFixed(2));
-    // ───────────────────────────────────────────────
 
     const updatedBalance = Number((currentBalance + profit).toFixed(2));
 
@@ -560,7 +524,6 @@ app.post('/order', async (req, res) => {
     console.log(`💸 Profit Earned: ${profit}`);
     console.log(`🧾 New Balance: ${updatedBalance} (isLucky=${!!isLuckyPlanned})`);
 
-    // Persist the order result
     await db.query('UPDATE signUp SET balance = ? WHERE id = ?', [updatedBalance, userId]);
     await db.query('INSERT INTO start_actions (id, isLucky) VALUES (?, ?)', [userId, isLuckyPlanned ? 1 : 0]);
 
@@ -580,33 +543,25 @@ app.post('/order', async (req, res) => {
   }
 });
 
-
-
-
-
-
 app.get("/order-description", (req, res) => {
-    res.render("orderdescription", { title: "Order description", errorMessage: "" });
+  res.render("orderdescription", { title: "Order description", errorMessage: "" });
 });
 
 app.get("/illustrate", (req, res) => {
-    res.render("illustrate", { title: "Illustrate", errorMessage: "" });
+  res.render("illustrate", { title: "Illustrate", errorMessage: "" });
 });
 
 app.get("/faq", (req, res) => {
-    res.render("faq", { title: "FAQs", errorMessage: "" });
+  res.render("faq", { title: "FAQs", errorMessage: "" });
 });
 
 app.get("/aboutus", (req, res) => {
-    res.render("aboutus", { title: "About as", errorMessage: "" });
+  res.render("aboutus", { title: "About as", errorMessage: "" });
 });
-
 
 app.get("/service", (req, res) => {
-    res.render("service", { title: "Service", errorMessage: "" });
+  res.render("service", { title: "Service", errorMessage: "" });
 });
-
-
 
 app.get("/profile", requireAuth, async (req, res) => {
   try {
@@ -623,14 +578,14 @@ app.get("/profile", requireAuth, async (req, res) => {
     }
 
     const userData = results[0];
-    const inviteCode = generateInviteCode(); // ← Generate code here
+    const inviteCode = generateInviteCode();
 
     res.render('profile', {
-      username:userData.username,
+      username: userData.username,
       balance: userData.balance,
       email: userData.email,
       phone_number: userData.phone_number,
-      inviteCode,           // ← Pass code to EJS
+      inviteCode,
       dashboardUrl: '/dashboard',
       user: req.session.username
     });
@@ -641,24 +596,16 @@ app.get("/profile", requireAuth, async (req, res) => {
   }
 });
 
-// --- MARKET FEATURE ---
-
-// Seed initial market data
-// Seed (uses global so both routes/pages can access the same data)
-
-
-// Randomly drift prices every 3 minutes
-const DRIFT_PCT_MAX = 0.08; // max ±0.08% change per update
+const DRIFT_PCT_MAX = 0.08;
 setInterval(() => {
   global.liveMarkets = global.liveMarkets.map(m => {
     const sign = Math.random() < 0.5 ? -1 : 1;
-    const mag  = Math.random() * DRIFT_PCT_MAX; // percentage
-    const next = +(m.price * (1 + sign * mag / 100)).toFixed(8); // keep raw precision; UI formats to 2dp
+    const mag = Math.random() * DRIFT_PCT_MAX;
+    const next = +(m.price * (1 + sign * mag / 100)).toFixed(8);
     return { ...m, price: Math.max(0, next) };
   });
 }, 3 * 60 * 1000);
 
-// JSON API (optional)
 app.get('/api/markets', (req, res) => {
   const data = global.liveMarkets.map(m => {
     const change = m.open > 0 ? ((m.price - m.open) / m.open) * 100 : 0;
@@ -667,12 +614,9 @@ app.get('/api/markets', (req, res) => {
   res.json(data);
 });
 
-// Market page
 app.get('/market', requireAuth, (req, res) => {
-  // Just pass the shared data; your EJS computes % from price/open
   res.render('market', { markets: global.liveMarkets, active: 'market' });
 });
-
 
 app.post('/logout', (req, res, next) => {
   req.session.destroy(err => {
@@ -685,15 +629,13 @@ app.post('/logout', (req, res, next) => {
   });
 });
 
-// Error handler
 app.use((err, req, res, next) => {
-    console.error('Application error:', err.stack);
-    res.status(500).send('Internal server error');
+  console.error('Application error:', err.stack);
+  res.status(500).send('Internal server error');
 });
 
-// Start server
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log('MySQL session store configured');
-    console.log('Connected to MySQL database'); // Ensure this log is still present
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log('MySQL session store configured');
+  console.log('Connected to MySQL database');
 });

@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Make pages render at device width on mobile -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
   <title>User Profile</title>
   <link rel="stylesheet" href="/profile.css">
   <link rel="stylesheet" href="/style.css">
@@ -92,15 +95,17 @@
         </p>
       </div>
       <!-- Optional: Add an "Edit" button next to the section header if you want to enable editing -->
-    </section>
 
-    <section class="account-actions" style="margin: 24px 0;">
+        <section class="account-actions" style="margin: 24px 0;">
   <form action="/logout" method="POST" class="logout-form" style="display:inline;">
     <button type="submit" class="logout-btn" aria-label="Log out">
       <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i> Logout
     </button>
   </form>
 </section>
+    </section>
+
+  
 
 
    

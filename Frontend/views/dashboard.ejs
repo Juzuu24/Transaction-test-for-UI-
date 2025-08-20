@@ -2,13 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Make pages render at device width on mobile -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
   <title>Dashboard</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header class="header">
-    <div class="logo"><img src="/source/logo.png" alt="Logo" class="logo"></div>
+
+  <!-- Header: single flex row so bell never wraps -->
+   <main class="page-content">
+      <header class="header">
+    <div class="logo">
+      <img src="/source/logo.png" alt="Logo" class="logo">
+    </div>
     <div class="brand">CHAINX</div>
     <div class="search-bar">
       <i class="fas fa-bars"></i>
@@ -18,103 +26,95 @@
     <i class="fas fa-bell notification-icon"></i>
   </header>
 
-  <div class="carousel">
-    <div class="carousel-images">
-      <img src="/source/graph1.png" alt="Chart 1">
-      <img src="/source/graph2.png" alt="Chart 2">
-      <img src="/source/graph3.png" alt="Chart 3">
-      <img src="/source/graph4.png" alt="Chart 4">
+  <!-- MAIN SCROLL AREA (lets us add safe bottom space on mobile) -->
+  <main class="page-content">
+    <div class="carousel">
+      <div class="carousel-images">
+        <img src="/source/graph1.png" alt="Chart 1">
+        <img src="/source/graph2.png" alt="Chart 2">
+        <img src="/source/graph3.png" alt="Chart 3">
+        <img src="/source/graph4.png" alt="Chart 4">
+      </div>
+      <button class="prev">&#10094;</button>
+      <button class="next">&#10095;</button>
     </div>
-    <button class="prev">&#10094;</button>
-    <button class="next">&#10095;</button>
-  </div>
 
-  <div class="stats">
-    <div class="card">
-      <i class="fas fa-dollar-sign"></i>
-      <p>BALANCE<br><strong>$<%= balance %></strong></p>
+    <div class="stats">
+      <div class="card">
+        <i class="fas fa-dollar-sign"></i>
+        <p>BALANCE<br><strong>$<%= balance %></strong></p>
+      </div>
+      <div class="card">
+        <i class="fas fa-wallet"></i>
+        <p>Monthly CashIn<br><strong>$<%= monthlyCashIn %></strong></p>
+      </div>
+      <div class="card">
+        <i class="fas fa-sack-dollar"></i>
+        <p>Monthly CashOut<br><strong>$<%= monthlyCashOut %></strong></p>
+      </div>
     </div>
-    <div class="card">
-      <i class="fas fa-wallet"></i>
-      <p>Monthly CashIn<br><strong>$<%= monthlyCashIn %></strong></p>
+
+    <!-- KBZ-style feature grid -->
+    <div class="feature-grid">
+      <a href="/withdraw" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-money-bill-wave"></i></div>
+        <span>Withdraw</span>
+      </a>
+      <a href="/deposit" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-coins"></i></div>
+        <span>Deposit</span>
+      </a>
+      <a href="/event" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-receipt"></i></div>
+        <span>Events</span>
+      </a>
+      <a href="/checkin" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-clipboard-check"></i></div>
+        <span>Daily Check-in</span>
+      </a>
+      <a href="/order" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-cart-plus"></i></div>
+        <span>Order</span>
+      </a>
+      <a href="/illustrate" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-clipboard-list"></i></div>
+        <span>Illustrate</span>
+      </a>
+      <a href="/aboutus" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-coins"></i></div>
+        <span>About Us</span>
+      </a>
+      <a href="/faq" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-receipt"></i></div>
+        <span>FAQs</span>
+      </a>
     </div>
-    <div class="card">
-      <i class="fas fa-sack-dollar"></i>
-      <p>Monthly CashOut<br><strong>$<%= monthlyCashOut %></strong></p>
+
+    <div style="margin:20px;">
+      <h2 style="text-align:center;">Market Overview</h2>
+      <%- include('partials/market-table', { markets, showTitle: false }) %>
     </div>
-  </div>
-
-  <!-- KBZ-style feature grid -->
-  <div class="feature-grid">
-    <a href="/withdraw" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-money-bill-wave"></i></div>
-      <span>Withdraw</span>
-    </a>
-    <a href="/deposit" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-coins"></i></div>
-      <span>Deposit</span>
-    </a>
-    <a href="/event" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-receipt"></i></div>
-      <span>Events</span>
-    </a>
-    <a href="/checkin" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-clipboard-check"></i></div>
-      <span>Daily Check-in</span>
-    </a>
-    <a href="/order" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-cart-plus"></i></div>
-      <span>Order</span>
-    </a>
-    <a href="/illustrate" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-clipboard-list"></i></div>
-      <span>Illustrate</span>
-    </a>
-    <a href="/aboutus" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-coins"></i></div>
-      <span>About Us</span>
-    </a>
-    <a href="/faq" class="feature-item">
-      <div class="icon-circle"><i class="fas fa-receipt"></i></div>
-      <span>FAQs</span>
-    </a>
-  </div>
-
-  <!-- Insert Market Table here -->
-  <div style="margin:20px;">
-    <h2 style="text-align:center;">Market Overview</h2>
-    <%- include('partials/market-table', { markets, showTitle: false }) %>
-  </div>
-
-  <!-- Insert Market Table here -->
- <%- include('partials/footer', { active: 'dashboard' }) %> <!-- for home page -->
+   </main>
 
 
 
+  <!-- Include footer partial directly (no extra wrapper) -->
+  <%- include('partials/footer', { active: 'dashboard' }) %>
 
   <script>
-    const carousel = document.querySelector('.carousel-images');
-    const images = document.querySelectorAll('.carousel-images img');
+    const track   = document.querySelector('.carousel-images');
+    const slides  = document.querySelectorAll('.carousel-images img');
     const prevBtn = document.querySelector('.prev');
     const nextBtn = document.querySelector('.next');
     let index = 0;
 
-    function showSlide(i){ 
-      const w = images[0].clientWidth; 
-      carousel.style.transform = `translateX(${-w*i}px)`; 
+    function showSlide(i){
+      const w = slides[0].clientWidth;
+      track.style.transform = `translateX(${-w*i}px)`;
     }
-    prevBtn.addEventListener('click', () => { 
-      index = (index - 1 + images.length) % images.length; 
-      showSlide(index); 
-    });
-    nextBtn.addEventListener('click', () => { 
-      index = (index + 1) % images.length; 
-      showSlide(index); 
-    });
-    setInterval(() => { 
-      index = (index + 1) % images.length; 
-      showSlide(index); 
-    }, 5000);
+    prevBtn.addEventListener('click', () => { index = (index - 1 + slides.length) % slides.length; showSlide(index); });
+    nextBtn.addEventListener('click', () => { index = (index + 1) % slides.length; showSlide(index); });
+    setInterval(() => { index = (index + 1) % slides.length; showSlide(index); }, 5000);
   </script>
 </body>
 </html>

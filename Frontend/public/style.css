@@ -1,260 +1,174 @@
-body {
-    margin: 0;
-    font-family: 'Georgia', serif;
-    background-color: #f4f4f4;
-    padding-bottom: 110px; /* Fix: Prevent content from hiding behind bottom nav */
-  }
-  
-  .header {
-    background-color: #d5e8f6;
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    position: relative;
-  }
-  
-  .logo {
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-  }
-  
-  .brand {
-    font-size: 20px;
-    font-weight: bold;
-    flex: 1;
-  }
-  
-  .search-bar {
-    display: flex;
-    align-items: center;
-    background-color: #f5eefe;
-    padding: 5px 10px;
-    border-radius: 20px;
-    flex: 1.5;
-    margin-right: 15px;
-  }
-  
-  .search-bar input {
-    border: none;
-    outline: none;
-    background: transparent;
-    padding: 5px;
-    width: 100%;
-    font-family: Arial, sans-serif;
-  }
-  
-  .notification-icon {
-    font-size: 20px;
-  }
-  
-  .carousel {
-    position: relative;
-    width: 90%;
-    margin: 20px auto;
-    overflow: hidden;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-  
-  .carousel-images {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-    width: 100%;
-  }
-  
-  .carousel-images img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    flex-shrink: 0;
-    border-radius: 5px;
-  }
-  
-  .prev, .next {
-    position: absolute;
-    top: 45%;
-    transform: translateY(-50%);
-    font-size: 24px;
-    color: white;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 1;
-  }
-  
-  .prev {
-    left: 10px;
-  }
-  
-  .next {
-    right: 10px;
-  }
-  
-  .stats {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
-  }
-  
-  .card {
-    background: white;
-    border: 1px solid #ccc;
-    padding: 15px;
-    width: 30%;
-    text-align: center;
-    border-radius: 10px;
-  }
-  
-  .card i {
-    font-size: 20px;
-    margin-bottom: 5px;
-  }
-  
-  .actions {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .action-box {
-    text-align: center;
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 10px;
-    width: 120px;
-    margin: 10px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-  }
-  
-  .action-box:hover {
-    background-color: #e0e0e0;
-    transform: scale(1.05);
-  }
-  
-  
-  .action-box i {
-    font-size: 30px;
-  }
-  
-  .bottom-nav {
-    display: flex;
-    justify-content: space-around;
-    background-color: #ddd;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 50px;
-    border: 1.5px solid black;
-  }
-  
-  .nav-item {
-    text-align: center;
-    flex: 1;
-    border-right: black solid 1.5px;
-    padding-top: 10px;
-    padding-right: 20px;
-    
-  }
-  
-  .nav-item i {
-    display: block;
-    font-size: 20px;
-  }
+/* =========================
+   Global / Theme
+   ========================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
 
-  :root{
+:root{
+  /* existing vars */
   --tabbar-bg: #fff;
-  --tabbar-accent: #6c5ce7;   /* change to your brand color */
+  --tabbar-accent: #6c5ce7;
   --tabbar-text: #3a3a3a;
   --tabbar-muted: #8b8b8b;
   --tabbar-border: #e9e9e9;
+
+  /* single source of truth for tabbar height */
+  --tabbar-h: 56px;
+
+  /* responsive helpers */
+  --fs-sm: clamp(12px, 1.2vw, 14px);
+  --fs-md: clamp(14px, 1.6vw, 16px);
+  --fs-lg: clamp(16px, 2.2vw, 20px);
+  --fs-xl: clamp(18px, 3vw, 24px);
+
+  --wrap-width: min(1100px, 92%);
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --radius-md: 10px;
 }
 
-.tabbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+html, body { min-height: 100%; }
 
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* ✅ fixed */
-  gap: 0;
-
-  background: var(--tabbar-bg);
-  border-top: 1px solid var(--tabbar-border);
-  box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
-
-  /* tighter padding for narrower bar */
-  padding: 4px 0 calc(6px + env(safe-area-inset-bottom));
+body {
+  margin: 0;
+  font-family: 'Georgia', serif;
+  background-color: #f4f4f4;
+  font-size: var(--fs-md);
 }
 
-.tabbar-item {
-  --icon-size: 20px;           /* was 20px */
-  text-decoration: none;
-  color: var(--tabbar-muted);
-  font-weight: 600;
-  font-size: 12px;             /* slightly smaller text */
-  line-height: 1;
-
-  display: flex;
-  flex-direction: column;
+/* =========================
+   Header
+   ========================= */
+.header {
+  background-color: #d5e8f6;
+  display: grid;                         /* responsive: grid for wrapping */
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: center;
-
-  padding: 6px 0;              /* was 10px */
-  min-height: 48px;            /* was 56px */
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  gap: var(--space-3);
+  padding: 10px 15px;
+  position: relative;
 }
 
-.tabbar-item i {
-  font-size: var(--icon-size);
-  margin-bottom: 4px;          /* less gap between icon & text */
+.logo { height: 50px; width: 50px; border-radius: 50%; }
+
+.brand {
+  font-size: var(--fs-lg);
+  font-weight: bold;
+  line-height: 1.2;
 }
 
-.tabbar-item.is-active {
-  color: var(--tabbar-accent);
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #f5eefe;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-right: 15px;
+}
+.search-bar input {
+  border: none; outline: none; background: transparent;
+  padding: 5px; width: 100%;
+  font-family: Arial, sans-serif; font-size: var(--fs-md);
 }
 
-.tabbar-item.is-active i {
-  transform: translateY(-1px);
+.notification-icon { font-size: 20px; }
+
+/* =========================
+   Carousel
+   ========================= */
+.carousel {
+  position: relative;
+  width: var(--wrap-width);
+  margin: 20px auto;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.carousel-images {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%;
+}
+.carousel-images img {
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  height: auto;
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 5px;
+}
+.prev, .next {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font-size: 22px; color: white; background-color: rgba(0,0,0,.28);
+  border: none; cursor: pointer; z-index: 1;
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+}
+.prev { left: 8px; } .next { right: 8px; }
+
+/* =========================
+   Stats
+   ========================= */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+  width: var(--wrap-width);
+  margin: 0 auto;
+}
+.card {
+  background: white; border: 1px solid #ccc; padding: 15px;
+  text-align: center; border-radius: 10px;
+}
+.card i { font-size: 20px; margin-bottom: 5px; }
+
+/* =========================
+   Actions & Feature Grid (Dashboard shortcuts)
+   ========================= */
+.actions {
+  width: var(--wrap-width);
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  gap: 22px;
+  /* Mobile: 3 items per row */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.tabbar-item:active {
-  filter: brightness(0.95);
+.action-box {
+  text-align: center; background-color: #f5f5f5;
+  padding: 20px; border-radius: 10px; width: 100%;
+  cursor: pointer; transition: background 0.3s, transform 0.2s;
 }
+.action-box:hover { background-color: #e0e0e0; transform: scale(1.05); }
+.action-box i { font-size: 30px; }
 
 .feature-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
   gap:22px;
   padding:16px 20px;
   text-align:center;
+  width: var(--wrap-width);
+  margin: 0 auto;
+  /* Mobile: 3 items per row */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .feature-item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-decoration:none;
-  color:#1f1f1f;
-  font-weight:600;
-  font-size:14px;
+  display:flex; flex-direction:column; align-items:center;
+  text-decoration:none; color:#1f1f1f; font-weight:600; font-size:14px;
 }
-
 .icon-circle{
   width:62px; height:62px; border-radius:50%;
   background:linear-gradient(145deg,#ffffff,#f2f3f7);
   box-shadow:0 6px 14px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.9);
   display:flex; align-items:center; justify-content:center;
-  margin-bottom:8px;
-  transition:transform .15s ease, box-shadow .15s ease;
+  margin-bottom:8px; transition:transform .15s ease, box-shadow .15s ease;
 }
 .icon-circle i{ font-size:22px; color:#4A6CF7; }
-
 .feature-item:hover .icon-circle,
 .feature-item:active .icon-circle{
   transform:translateY(-2px);
@@ -271,20 +185,301 @@ body {
 .feature-item:nth-child(7) .icon-circle i{ color:#7e57c2; } /* About Us */
 .feature-item:nth-child(8) .icon-circle i{ color:#ef5350; } /* FAQs */
 
+/* =========================
+   Market styles (aligned header & rows)
+   ========================= */
+.market-card {
+  background:#fff; margin:16px auto; border-radius:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.06); overflow:hidden;
+  width: var(--wrap-width);
+}
 
-/*market style*/
-.market-page { padding:12px 0 100px; }
-    .market-card{ background:#fff; margin:16px; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.06); overflow:hidden; }
-    .market-head{ display:grid; grid-template-columns:1.2fr 1fr auto; gap:12px; padding:14px 16px; font-weight:700; font-size:14px; color:#6b7280; background:linear-gradient(180deg,#fafafa,#f5f7fb); border-bottom:1px solid #eef0f4; }
-    .market-list{ list-style:none; margin:0; padding:0; }
-    .market-row{ display:grid; grid-template-columns:1.2fr 1fr auto; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid #f1f3f7; }
-    .market-row:last-child{ border-bottom:none; }
-    .m-left{ display:flex; align-items:center; gap:12px; min-width:0; }
-    .coin-icon{ width:28px; height:28px; border-radius:50%; background:#f5f6fa; object-fit:cover; box-shadow: inset 0 1px 0 rgba(255,255,255,.9); }
-    .coin-icon.fallback{ display:flex; align-items:center; justify-content:center; font-weight:700; color:#64748b; }
-    .m-symbol{ font-weight:700; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .m-price{ font-feature-settings:"tnum" 1,"lnum" 1; letter-spacing:.2px; color:#111827; }
-    .badge{ justify-self:end; font-weight:700; padding:6px 10px; min-width:74px; text-align:center; border-radius:10px; font-size:13px; color:#fff; transition:background .2s ease; }
-    .badge.up{  background: linear-gradient(180deg,#34d399,#10b981); box-shadow:0 6px 14px rgba(16,185,129,.25); }
-    .badge.down{background: linear-gradient(180deg,#ef4444,#dc2626); box-shadow:0 6px 14px rgba(239,68,68,.25); }
-    @media (max-width:480px){ .market-head,.market-row{ grid-template-columns:1.2fr .9fr auto; padding:12px 12px; } .badge{ min-width:66px; padding:5px 8px; font-size:12px; } }
+.market-head,
+.market-row {
+  display:grid;
+  grid-template-columns: 1.2fr 1fr 0.6fr;  /* SAME for header and rows */
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+}
+
+.market-head {
+  font-weight:700; font-size:14px; color:#6b7280;
+  background:linear-gradient(180deg,#fafafa,#f5f7fb);
+  border-bottom:1px solid #eef0f4;
+}
+
+.market-row {
+  border-bottom:1px solid #f1f3f7;
+}
+.market-row:last-child { border-bottom:none; }
+
+.m-left { display:flex; align-items:center; gap:12px; min-width:0; }
+.coin-icon { width:28px; height:28px; border-radius:50%; background:#f5f6fa; }
+.m-symbol { font-weight:700; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.m-price { text-align:right; font-feature-settings:"tnum" 1,"lnum" 1; letter-spacing:.2px; color:#111827; white-space:nowrap; }
+
+.badge {
+  justify-self:end;
+  font-weight:700;
+  padding:6px 10px;
+  min-width:74px;
+  text-align:center;
+  border-radius:10px;
+  font-size:13px;
+  color:#fff;
+  white-space:nowrap;
+}
+.badge.up { background: linear-gradient(180deg,#34d399,#10b981); }
+.badge.down { background: linear-gradient(180deg,#ef4444,#dc2626); }
+
+/* Small screens: shrink but keep alignment */
+@media (max-width: 520px){
+  .market-head,
+  .market-row {
+    grid-template-columns: 1fr 0.8fr 0.6fr;  /* SAME */
+    gap:8px; padding:10px;
+    font-size:12px;
+  }
+  .coin-icon { width:22px; height:22px; }
+  .badge { min-width:50px; padding:4px 6px; font-size:11px; }
+}
+
+@media (max-width: 360px){
+  .market-head,
+  .market-row {
+    grid-template-columns: 0.9fr 0.7fr 0.55fr; /* SAME */
+    gap:6px; padding:8px;
+    font-size:11.5px;
+  }
+  .coin-icon { width:20px; height:20px; }
+  .badge { min-width:46px; padding:3px 6px; font-size:10.5px; }
+}
+
+
+/* =========================
+   Navigation bars
+   ========================= */
+.bottom-nav { /* legacy bottom nav kept hidden */
+  display: none;
+  justify-content: space-around;
+  background-color: #ddd;
+  position: fixed;
+  bottom: 0; width: 100%; height: 50px;
+  border: 1.5px solid black;
+}
+.nav-item {
+  text-align: center; flex: 1;
+  border-right: black solid 1.5px;
+  padding-top: 10px; padding-right: 20px;
+}
+.nav-item i { display: block; font-size: 20px; }
+
+/* Modern tabbar (mobile) */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
+  background: var(--tabbar-bg);
+  border-top: 1px solid var(--tabbar-border);
+  box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
+  min-height: var(--tabbar-h);
+  padding: 4px 0 calc(6px + env(safe-area-inset-bottom));
+}
+.tabbar-item {
+  --icon-size: 20px;
+  text-decoration: none; color: var(--tabbar-muted);
+  font-weight: 600; font-size: 12px; line-height: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 6px 0; min-height: 56px; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.tabbar-item i { font-size: var(--icon-size); margin-bottom: 4px; }
+.tabbar-item.is-active { color: var(--tabbar-accent); }
+.tabbar-item.is-active i { transform: translateY(-1px); }
+.tabbar-item:active { filter: brightness(0.95); }
+
+/* =========================
+   Footer + bottom space on mobile
+   ========================= */
+footer, .site-footer, .page-footer, .footer {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 100%;
+  margin-top: 24px;
+}
+
+/* add room for the fixed tabbar to avoid overlap on mobile */
+@media (max-width: 767.98px){
+  body { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); }
+  /* also pad common scroll containers in case the body isn't the scroller */
+  main, .page-content, .container, .market-page {
+    padding-bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom));
+  }
+}
+
+/* On tablet/desktop the tabbar is hidden and extra space removed */
+@media (min-width: 768px){
+  .tabbar { display: none !important; }
+  body,
+  main, .page-content, .container, .market-page {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* =========================
+   Breakpoints / Accessibility
+   ========================= */
+/* Tablet and up */
+@media (min-width: 768px){
+  .brand { font-size: var(--fs-xl); }
+  .logo { height: 50px; width: 50px; }
+  .search-bar { max-width: 520px; margin-left: auto; }
+  .prev, .next { width: 40px; height: 40px; font-size: 24px; }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px){
+  .carousel { margin-top: 24px; }
+  .actions { padding: 24px; grid-template-columns: repeat(4, minmax(0, 1fr)); }  /* 4 per row */
+  .feature-grid { gap: 22px; grid-template-columns: repeat(4, minmax(0, 1fr)); } /* 4 per row */
+  .stats { gap: 22px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .carousel-images { transition: none; }
+  .feature-item .icon-circle { transition: none; }
+  .action-box { transition: none; }
+}
+
+/* ======= FINAL, MINIMAL FIXES (dashboard) ======= */
+
+/* 1) Header: keep logo, brand, search, bell on ONE row */
+.header{
+  background:#d5e8f6;
+  display:flex !important;        /* stop the old grid */
+  align-items:center;
+  gap:12px;
+  padding:10px 15px;
+  flex-wrap:nowrap !important;    /* prevent wrapping */
+}
+.header > .logo{                   /* wrapper div */
+  display:flex; align-items:center; flex:0 0 auto;
+  width:auto !important; height:auto !important;
+}
+.header > .logo img.logo{          /* only size the <img> */
+  width:50px; height:50px; border-radius:50%; display:block;
+}
+.brand{ font-weight:700; white-space:nowrap; flex:0 0 auto; }
+.search-bar{
+  display:flex; align-items:center; gap:8px;
+  background:#f5eefe; padding:6px 12px; border-radius:20px;
+  flex:1 1 320px;                  /* search grows in the middle */
+  min-width:160px; max-width:640px; margin:0 8px;
+}
+.search-bar input{ border:none; outline:none; background:transparent; width:100%; }
+.notification-icon{ font-size:20px; flex:0 0 auto; margin-left:auto; }
+
+@media (max-width:480px){
+  .brand{ font-size:16px; }
+  .search-bar{ flex-basis:200px; min-width:140px; }
+}
+@media (max-width:360px){ .brand{ display:none; } }
+
+/* 2) Dashboard shortcuts: 3 per row on mobile, 4 on desktop */
+.feature-grid, .actions{
+  display:grid !important;
+  gap:22px;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+}
+@media (min-width:1024px){
+  .feature-grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
+  .actions     { grid-template-columns:repeat(4, minmax(0, 1fr)); }
+}
+
+/* 3) Tabbar + footer: avoid overlap on phones */
+:root{ --tabbar-h:56px; }
+@media (max-width:767.98px){
+  body{ padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom)) !important; }
+  /* your main scroll area is the whole page, so give the content extra room too */
+  .page-content, main, .container, .market-page{
+    padding-bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom)) !important;
+  }
+  .tabbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:1000;
+    display:grid !important; min-height:var(--tabbar-h);
+  }
+}
+/* tablet/desktop: hide tabbar and remove extra space */
+@media (min-width:768px){
+  .tabbar{ display:none !important; }
+  body, .page-content, main, .container, .market-page{
+    padding-bottom:0 !important;
+  }
+}
+
+/* 4) Safety: keep footer visible and not clipped */
+footer, .footer, .site-footer, .page-footer{
+  position:relative; z-index:2; flex-shrink:0; width:100%;
+  margin-top:24px;
+}
+/* stop accidental horizontal scroll on small screens */
+html, body{ overflow-x:hidden; }
+
+/* === Show the mobile tabbar on ALL screen sizes (desktop too) === */
+:root { --tabbar-h: 56px; }
+
+.tabbar{
+  display: grid !important;                /* force it to show */
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  min-height: var(--tabbar-h);
+  z-index: 1000;
+}
+
+/* Always leave room so content/footers don't sit under the tabbar */
+body,
+.page-content, main, .container, .market-page{
+  padding-bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom)) !important;
+}
+
+/* If you previously had a rule hiding tabbar on desktop, neutralize it */
+@media (min-width: 768px){
+  .tabbar{ display: grid !important; }     /* un-hide on PC */
+  /* keep the padding so the table/footers aren't overlapped */
+}
+
+/* --- Make market header columns align with body rows --- */
+.market-head,
+.market-row{
+  grid-template-columns: 1.2fr 1fr 0.6fr; /* ensure EXACTLY the same */
+}
+
+/* Header cell alignment: 1st left, 2nd & 3rd right/end */
+.market-head > :nth-child(1){
+  text-align: right;
+  justify-self: start;
+}
+.market-head > :nth-child(2){
+  text-align: right;          /* matches .m-price */
+  justify-self: end;
+}
+.market-head > :nth-child(3){
+  text-align: right;          /* matches .badge end */
+  justify-self: end;
+}
+
+/* Keep the same alignment on small screens too */
+@media (max-width: 520px){
+  .market-head,
+  .market-row{
+    grid-template-columns: 1fr 0.8fr 0.6fr; /* same on both */
+  }
+  .market-head > :nth-child(2),
+  .market-head > :nth-child(3){
+    text-align: right;
+    justify-self: end;
+  }
+}
+
+

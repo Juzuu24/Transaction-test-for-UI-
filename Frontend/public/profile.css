@@ -1,200 +1,314 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* =========================
+   Global / Base
+   ========================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+:root{
+  /* fluid type */
+  --fs-sm: clamp(12px, 1.2vw, 14px);
+  --fs-md: clamp(14px, 1.6vw, 16px);
+  --fs-lg: clamp(16px, 2.2vw, 20px);
+  --fs-xl: clamp(18px, 3vw, 24px);
+
+  /* layout */
+  --wrap: min(92vw, 1100px);
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --radius: 10px;
+  --shadow: 0 8px 24px rgba(0,0,0,.06);
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 20px 0;            /* vertical spacing; horizontal handled by wrappers */
+  font-size: var(--fs-md);
 }
 
+/* Constrain main blocks on wider screens (optional wrapper via class) */
+.profile-section,
+.wallet-section,
+.account-info,
+.account-settings { width: var(--wrap); margin: 20px auto; }
+
+/* =========================
+   Profile header
+   ========================= */
 .profile-section {
-    display: flex;
-    align-items: center;
-    padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .profile-img {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: #ccc;
-    margin-right: 15px;
+  width: 70px; height: 70px; border-radius: 50%;
+  background-color: #ccc; flex-shrink: 0;
 }
 
 .user-info h2 {
-    margin: 0;
-    font-size: 1.5em;
+  margin: 0;
+  font-size: var(--fs-lg);
 }
 
 .vip-badge {
-    background: black;
-    color: yellow;
-    font-size: 0.7em;
-    padding: 2px 6px;
-    border-radius: 5px;
-    margin-left: 10px;
+  background: #000;
+  color: yellow;
+  font-size: 0.7em;
+  padding: 2px 6px;
+  border-radius: 5px;
+  margin-left: 10px;
 }
 
 .score-bar {
-    display: inline-block;
-    width: 100px;
-    height: 8px;
-    background: #eee;
-    border-radius: 5px;
-    margin: 0 8px;
-    vertical-align: middle;
+  display: inline-block;
+  width: 120px;
+  height: 8px;
+  background: #eee;
+  border-radius: 5px;
+  margin: 0 8px;
+  vertical-align: middle;
 }
-
 .score-bar .fill {
-    width: 100%;
-    height: 100%;
-    background: #90ee90;
-    border-radius: 5px;
-    display: block;
+  width: 100%; height: 100%;
+  background: #90ee90; border-radius: 5px; display: block;
 }
 
+/* =========================
+   Wallet
+   ========================= */
 .wallet-section {
-    background: #1F3A54;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px;
+  background: #1F3A54;
+  color: white;
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .wallet-balance {
-    font-size: 2em;
-    font-weight: bold;
-    margin: 10px 0;
+  font-size: 2em;
+  font-weight: bold;
+  margin: 10px 0;
 }
+.currency { font-size: 0.5em; margin-left: 5px; }
 
-.currency {
-    font-size: 0.5em;
-    margin-left: 5px;
-}
-
-.earnings-tabs {
-    margin-top: 15px;
-}
-
+.earnings-tabs { margin-top: 15px; }
 .earnings-tabs button {
-    background: #c5ffcb;
-    border: none;
-    padding: 8px 15px;
-    margin-right: 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
+  background: #c5ffcb;
+  border: none;
+  padding: 8px 15px;
+  margin: 0 10px 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
 }
-
-.earnings-tabs button.active-tab {
-    background: #a6eeb1;
-}
+.earnings-tabs button.active-tab { background: #a6eeb1; }
 
 .earnings-details {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 12px;
+  margin-top: 15px;
 }
-
 .earnings-details div p {
-    margin: 0;
-    font-size: 0.9em;
+  margin: 0;
+  font-size: 0.9em;
 }
 
-.account-info, .account-settings {
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
-
-    border: 1px solid #cce0ff;
+/* =========================
+   Info / Settings cards
+   ========================= */
+.account-info,
+.account-settings {
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid #cce0ff;
+  background: #fff;
+  box-shadow: var(--shadow);
 }
 
 .account-info h2,
 .account-settings h2 {
-    background-color: #e6f0ff; /* Light blue */
-    padding: 10px 15px;
-    border-left: 5px solid #3399ff; /* Accent bar */
-    border-radius: 4px;
-    font-size: 20px;
-    margin-bottom: 20px;
+  background-color: #e6f0ff;
+  padding: 10px 15px;
+  border-left: 5px solid #3399ff;
+  border-radius: 4px;
+  font-size: 20px;
+  margin: 0 0 20px 0;
 }
-
 
 .card {
-    background-color: #ffffff;
-    border: 1px solid #dcdcdc;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    transition: box-shadow 0.3s ease;
-    background-image: linear-gradient(to bottom, #fefeff, #f7faff);
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  padding: 20px;
+  border-radius: var(--radius);
+  text-align: center;
+  transition: box-shadow 0.25s ease;
+  background-image: linear-gradient(to bottom, #fefeff, #f7faff);
 }
+.card:hover { box-shadow: 0 10px 26px rgba(0,0,0,.08); }
 
-.account-detail p {
-    font-size: 16px;
-    margin-bottom: 10px;
+.account-detail p { font-size: 16px; margin-bottom: 10px; }
+
+/* =========================
+   Transaction table
+   ========================= */
+.transaction-history {
+  margin-top: 20px;
+  overflow-x: auto;                    /* mobile scroll when needed */
+  -webkit-overflow-scrolling: touch;
 }
-
 .transaction-history table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  min-width: 560px;                    /* avoid cramped columns on phones */
+  border-collapse: collapse;
 }
-
 .transaction-history th, .transaction-history td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
 }
+.transaction-history th { background-color: #f1f1f1; }
+.transaction-history tr:hover { background-color: #f9f9f9; }
 
-.transaction-history th {
-    background-color: #f1f1f1;
-}
-
-.transaction-history tr:hover {
-    background-color: #f9f9f9;
-}
-
-.account-settings ul {
-    list-style: none;
-}
-
+/* =========================
+   Settings list
+   ========================= */
+.account-settings ul { list-style: none; padding-left: 0; margin: 0; }
 .account-settings li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
 }
-
+.account-settings li:last-child { border-bottom: 0; }
 .account-settings li a {
-    text-decoration: none;
-    color: #2c3e50;
-    font-size: 16px;
+  text-decoration: none;
+  color: #2c3e50;
+  font-size: 16px;
 }
+.account-settings li a:hover { text-decoration: underline; }
 
-.account-settings li a:hover {
-    text-decoration: underline;
-}
-
+/* =========================
+   Back button
+   ========================= */
 .back-button {
-    display: block;
-    width: fit-content;
-    margin: 30px auto 0;
-    padding: 12px 25px;
-    background-color: #1F3A54;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    text-decoration: none;
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  .back-button:hover {
-    background-color: #1c2e40;
-  }
+  display: block;
+  width: max-content;
+  margin: 30px auto 0;
+  padding: 12px 25px;
+  background-color: #1F3A54;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
+}
+.back-button:hover { filter: brightness(.96); }
+.back-button:active { transform: translateY(1px); }
 
+/* =========================
+   Responsive layout tweaks
+   ========================= */
+/* Phones */
+@media (max-width: 520px){
+  .profile-section { padding: 16px; text-align: center; }
+  .score-bar { margin: 8px auto; }
+  .user-info h2 { font-size: var(--fs-lg); }
+}
 
+/* Tablet: split account blocks into two columns when appropriate */
+@media (min-width: 768px){
+  .account-info, .account-settings { padding: 24px; }
+  .wallet-section { padding: 24px; }
+
+  /* Optional: grid layout if you wrap info + settings in a parent container */
+  .account-grid {
+    display: grid; gap: 20px; width: var(--wrap); margin: 20px auto;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px){
+  .profile-section,
+  .wallet-section,
+  .account-info,
+  .account-settings { width: min(900px, 92%); }
+
+  .transaction-history table { min-width: 720px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .card, .back-button { transition: none; }
+}
+
+/* =========================
+   Profile: single fixed container
+   ========================= */
+
+/* Global container for the whole profile page */
+:root{
+  --profile-max: 960px;      /* fixed width on large screens */
+  --profile-pad: 16px;       /* side padding inside container */
+}
+
+/* Wrap your profile content with .profile-container (see HTML below) */
+.profile-container{
+  width: min(var(--profile-max), 92vw);
+  margin-inline: auto;
+  padding-inline: var(--profile-pad);
+}
+
+/* Make sections fill the container width instead of setting their own */
+.profile-container .profile-section,
+.profile-container .wallet-section,
+.profile-container .account-info,
+.profile-container .account-settings{
+  width: 100% !important;   /* override earlier width: var(--wrap) */
+  margin: 16px 0 !important;
+}
+
+/* Optional: two-column layout for Info + Settings on big screens */
+@media (min-width: 1024px){
+  .profile-container .account-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+/* Keep nice vertical rhythm inside the container */
+.profile-container .profile-section{ padding: 20px; }
+.profile-container .wallet-section{ padding: 20px; }
+.profile-container .account-info,
+.profile-container .account-settings{ padding: 20px; }
+
+/* Table stays responsive inside the fixed container */
+.profile-container .transaction-history{
+  overflow-x: auto;
+}
+.profile-container .transaction-history table{
+  width: 100%;
+  min-width: 640px;          /* reasonable minimum for columns */
+}
+
+/* If you show a fixed bottom tabbar, leave some space on phones */
+@media (max-width: 767.98px){
+  .profile-container{ padding-bottom: 72px; }
+}

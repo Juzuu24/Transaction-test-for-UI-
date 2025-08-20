@@ -1,77 +1,146 @@
-/* Layout & Reset */
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background: #fafafa;
-}
-.container {
-  max-width: 800px;
-  margin: auto;
-}
-.page-title {
-  text-align: center;
+/* =========================
+   Base / Layout
+   ========================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+:root{
+  /* fluid type */
+  --fs-sm: clamp(12px, 1.2vw, 14px);
+  --fs-md: clamp(14px, 1.6vw, 16px);
+  --fs-lg: clamp(18px, 2.2vw, 20px);
+
+  --wrap: min(92vw, 800px);
+  --radius: 10px;
 }
 
-/* Filter Bar */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px 0;
+  background: #fafafa;
+  color: #111;
+  font-size: var(--fs-md);
+}
+
+.container {
+  width: var(--wrap);
+  margin: auto;
+  padding: 0 8px; /* small side padding for tiny screens */
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: var(--fs-lg);
+}
+
+/* =========================
+   Filter Bar
+   ========================= */
 .filter-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 0.5rem;
   margin-bottom: 1rem;
 }
+
 .filter-bar input,
 .filter-bar select {
-  flex: 1;
-  padding: 0.5em;
-  font-size: 1rem;
+  padding: 0.6em 0.7em;
+  font-size: var(--fs-md);
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  min-height: 40px;
 }
+
 .filter-btn {
   padding: 0.6em 1.2em;
-  font-size: 1rem;
+  font-size: var(--fs-md);
   background: #007bff;
   color: white;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
+  min-height: 40px;
+  transition: filter .12s ease, transform .12s ease;
 }
-.filter-btn:hover {
-  background: #0056b3;
+.filter-btn:hover { background: #0056b3; }
+.filter-btn:active { transform: translateY(1px); }
+
+/* Stack filter controls on narrow screens */
+@media (max-width: 560px){
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+  .filter-btn { width: 100%; }
 }
 
-/* Tables */
+/* =========================
+   Tables
+   ========================= */
 .transaction-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2rem;
+
+  /* mobile friendliness: allow horizontal scroll when cramped */
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 16px rgba(0,0,0,.04);
 }
+
+/* keep a sensible minimum width so columns don't crush */
+.transaction-table table,
+.transaction-table { min-width: 560px; }
+
 .transaction-table th,
 .transaction-table td {
   border-bottom: 1px solid #ddd;
   padding: 0.75em;
+  background-clip: padding-box;
 }
+
 .transaction-table th {
   background: #f4f4f4;
   text-align: left;
+  position: sticky; /* helpful on desktop when scrolling horizontally */
+  top: 0;
 }
+
 .transaction-table td.amount {
   text-align: right;
-  font-family: monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* Positive / Negative styling */
-.transaction-table td.amount::before {
-  content: attr(data-sign);
-}
-.transaction-table td.amount.negative {
-  color: #c00;
-}
-.transaction-table td.amount.positive {
-  color: #080;}
-/* Back Button */
+.transaction-table td.amount::before { content: attr(data-sign); }
+.transaction-table td.amount.negative { color: #c00; }
+.transaction-table td.amount.positive { color: #080; }
+
+/* =========================
+   Back Button
+   ========================= */
 .back-button {
   display: inline-block;
   margin-top: 1rem;
   text-decoration: none;
   color: #007bff;
+  font-size: var(--fs-md);
 }
-.back-button:hover {
-  text-decoration: underline;
+.back-button:hover { text-decoration: underline; }
+
+/* =========================
+   Responsive spacing tweaks
+   ========================= */
+@media (max-width: 480px){
+  body { margin: 12px 0; }
+  .container { padding: 0 12px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .filter-btn { transition: none; }
 }
