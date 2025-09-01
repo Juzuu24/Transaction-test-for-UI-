@@ -1,6 +1,3 @@
--- 1. Create DB and switch to it
-CREATE DATABASE IF NOT EXISTS user;
-USE user;
 
 -- 2. Main user table
 CREATE TABLE IF NOT EXISTS signUp (
