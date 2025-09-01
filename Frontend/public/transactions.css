@@ -57,7 +57,7 @@ body {
 .filter-btn {
   padding: 0.6em 1.2em;
   font-size: var(--fs-md);
-  background: #007bff;
+  background: #2c3f51;
   color: white;
   border: none;
   border-radius: 8px;
@@ -65,7 +65,7 @@ body {
   min-height: 40px;
   transition: filter .12s ease, transform .12s ease;
 }
-.filter-btn:hover { background: #0056b3; }
+.filter-btn:hover { background: #435e7a; }
 .filter-btn:active { transform: translateY(1px); }
 
 /* Stack filter controls on narrow screens */
@@ -123,14 +123,25 @@ body {
 /* =========================
    Back Button
    ========================= */
-.back-button {
-  display: inline-block;
-  margin-top: 1rem;
-  text-decoration: none;
-  color: #007bff;
-  font-size: var(--fs-md);
-}
-.back-button:hover { text-decoration: underline; }
+ .back-btn {
+      display: block;
+      width: fit-content;
+      margin: 30px auto 0;
+      padding: 12px 25px;
+      background-color: #1f3a54;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background-color: #1c2e40;
+    }
 
 /* =========================
    Responsive spacing tweaks

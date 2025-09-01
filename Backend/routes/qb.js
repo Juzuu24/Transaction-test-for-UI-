@@ -305,6 +305,73 @@ Router.get("/withdrawals/delete/:withdraw_id", (req, res) => {
   });
 });
 
+// Approve withdrawal (reduce balance only here)
+Router.post("/withdrawals/approve/:withdraw_id", (req, res) => {
+  const withdraw_id = req.params.withdraw_id;
+  mysqlConnection.query(
+    "SELECT id, amount, status FROM withdrawals WHERE withdraw_id = ?",
+    [withdraw_id],
+    (err, results) => {
+      if (err || results.length === 0) {
+        return res.status(404).json({ message: "Withdrawal not found" });
+      }
+      const { id, amount, status } = results[0];
+      if (status !== 'pending') {
+        return res.status(400).json({ message: "Withdrawal already processed" });
+      }
+      mysqlConnection.query(
+        "SELECT balance FROM signUp WHERE id = ?",
+        [id],
+        (err2, userResults) => {
+          if (err2 || userResults.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          const balance = parseFloat(userResults[0].balance);
+          if (balance < amount) {
+            return res.status(400).json({ message: "Insufficient balance" });
+          }
+          mysqlConnection.query(
+            "UPDATE signUp SET balance = balance - ? WHERE id = ?",
+            [amount, id],
+            (err3) => {
+              if (err3) {
+                return res.status(500).json({ message: "Error updating balance" });
+              }
+              mysqlConnection.query(
+                "UPDATE withdrawals SET status = 'approved' WHERE withdraw_id = ?",
+                [withdraw_id],
+                (err4) => {
+                  if (err4) {
+                    return res.status(500).json({ message: "Error approving withdrawal" });
+                  }
+                  res.redirect("/withdrawals");
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
+// Reject withdrawal
+Router.post("/withdrawals/reject/:withdraw_id", (req, res) => {
+  const withdraw_id = req.params.withdraw_id;
+  mysqlConnection.query(
+    "UPDATE withdrawals SET status = 'rejected' WHERE withdraw_id = ?",
+    [withdraw_id],
+    (err) => {
+      if (!err) {
+        res.redirect("/withdrawals");
+      } else {
+        console.error(err);
+        res.status(500).json({ message: "Error rejecting withdrawal" });
+      }
+    }
+  );
+});
+
 
 /* ---------------- DEPOSITS CRUD ---------------- */
 

@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS withdrawals (
     FOREIGN KEY (id) REFERENCES signUp(id)
 );
 
+ALTER TABLE withdrawals
+ADD COLUMN status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending';
 -- 5. Table for deposit transactions
 CREATE TABLE IF NOT EXISTS deposit (
     deposit_id INT AUTO_INCREMENT PRIMARY KEY,

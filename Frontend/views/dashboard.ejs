@@ -3,13 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <!-- Make pages render at device width on mobile -->
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Dashboard</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .alert.success { background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin: 10px 0; }
+    .alert.error   { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin: 10px 0; }
+  </style>
 </head>
 <body>
+
+  <!-- Show session message if present -->
+  <% if (message) { %>
+    <div class="alert <%= message.type %>">
+      <%= message.text %>
+    </div>
+  <% } %>
 
   <!-- Header: single flex row so bell never wraps -->
    <main class="page-content">
@@ -76,9 +86,9 @@
         <div class="icon-circle"><i class="fas fa-cart-plus"></i></div>
         <span>Order</span>
       </a>
-      <a href="/illustrate" class="feature-item">
+      <a href="/service" class="feature-item">
         <div class="icon-circle"><i class="fas fa-clipboard-list"></i></div>
-        <span>Illustrate</span>
+        <span>Service</span>
       </a>
       <a href="/aboutus" class="feature-item">
         <div class="icon-circle"><i class="fas fa-coins"></i></div>
@@ -114,7 +124,4 @@
     }
     prevBtn.addEventListener('click', () => { index = (index - 1 + slides.length) % slides.length; showSlide(index); });
     nextBtn.addEventListener('click', () => { index = (index + 1) % slides.length; showSlide(index); });
-    setInterval(() => { index = (index + 1) % slides.length; showSlide(index); }, 5000);
-  </script>
-</body>
-</html>
+    setInterval(() => { index = (index + 1) % slides.length; showSlide(index); },

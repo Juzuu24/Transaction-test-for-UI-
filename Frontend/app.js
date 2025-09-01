@@ -292,52 +292,36 @@ app.post("/withdraw", requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
     const { amount, method, account } = req.body;
-
     const amt = Number(amount);
-    if (!Number.isFinite(amt) || amt <= 0) {
-      req.session.message = { type: "error", text: "Please enter a valid withdrawal amount." };
+
+    // Validation (optional)
+    if (!amt || !method || !account) {
+      req.session.message = { type: "error", text: "All fields are required." };
       return req.session.save(() => res.redirect("/withdraw"));
     }
 
-    if (amt < 100) {
-      req.session.message = { type: "error", text: "Minimum withdrawal is $100." };
-      return req.session.save(() => res.redirect("/withdraw"));
-    }
-
+    // Optional: Check balance for user feedback
     const [rows] = await db.execute('SELECT balance FROM signUp WHERE id = ?', [userId]);
     if (!rows.length) {
       req.session.message = { type: "error", text: "User not found." };
       return req.session.save(() => res.redirect("/withdraw"));
     }
-
-    const currentBalance = Number(rows[0].balance) || 0;
-
-    if (currentBalance <= 0 || currentBalance < amt) {
-      req.session.message = { type: "error", text: "Insufficient balance! Please deposit first." };
+    if (parseFloat(rows[0].balance) < amt) {
+      req.session.message = { type: "error", text: "Insufficient balance." };
       return req.session.save(() => res.redirect("/withdraw"));
     }
 
+    // Insert withdrawal as pending (do NOT update balance here)
     await db.execute(
-      'INSERT INTO withdrawals (id, amount, method, account) VALUES (?, ?, ?, ?)',
-      [userId, amt, method, account]
+      "INSERT INTO withdrawals (id, amount, method, account, status) VALUES (?, ?, ?, ?, ?)",
+      [userId, amt, method, account, "pending"]
     );
 
-    const [updateResult] = await db.execute(
-      'UPDATE signUp SET balance = balance - ? WHERE id = ?',
-      [amt, userId]
-    );
-
-    if (updateResult.affectedRows === 0) {
-      req.session.message = { type: "error", text: "Balance update failed." };
-      return req.session.save(() => res.redirect("/withdraw"));
-    }
-
-    req.session.message = { type: "success", text: "Withdrawal successful!" };
+    req.session.message = { type: "success", text: "Withdrawal request submitted and is pending approval." };
     return req.session.save(() => res.redirect("/dashboard"));
-
   } catch (err) {
-    console.error("Error processing withdraw:", err);
-    req.session.message = { type: "error", text: "Withdraw failed. Please try again." };
+    console.error(err);
+    req.session.message = { type: "error", text: "Error processing withdrawal." };
     return req.session.save(() => res.redirect("/withdraw"));
   }
 });
@@ -547,8 +531,8 @@ app.get("/order-description", (req, res) => {
   res.render("orderdescription", { title: "Order description", errorMessage: "" });
 });
 
-app.get("/illustrate", (req, res) => {
-  res.render("illustrate", { title: "Illustrate", errorMessage: "" });
+app.get("/service", (req, res) => {
+  res.render("service", { title: "Service", errorMessage: "" });
 });
 
 app.get("/faq", (req, res) => {
