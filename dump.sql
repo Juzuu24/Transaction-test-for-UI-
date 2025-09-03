@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS withdrawals (
     id INT,
     amount DECIMAL(10,2),
     method VARCHAR(100),
-    account VARCHAR(255),
+    holderName VARCHAR(255),
+    phoneNumber VARCHAR(15),
+    cryptoId VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id) REFERENCES signUp(id)
 );
