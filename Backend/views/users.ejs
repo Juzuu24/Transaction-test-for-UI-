@@ -48,8 +48,9 @@
                     <td><%= user.phone_number %></td>
                     <td><%= user.email %></td>
                     <td>$<%= user.balance %></td>
-                     <td>$<%= user.password_hash %></td>
-                     
+                    <td>$<%= user.password_hash %></td>
+                    <td><%= user.vip_status %></td>
+                    <td><%= user.credit_score %></td>
                     <td>
                       <div class="btn-group">
                         <a href="/users/edit/<%= user.id %>" class="btn btn-sm btn-warning">Edit</a>

@@ -17,8 +17,16 @@
       <input type="text" name="method" class="form-control" value="<%= withdrawal.method %>" required>
     </div>
     <div class="mb-3">
-      <label>Account</label>
-      <input type="text" name="account" class="form-control" value="<%= withdrawal.account %>" required>
+      <label>Holder Name</label>
+      <input type="text" name="holderName" class="form-control" value="<%= withdrawal.holderName %>" required>
+    </div>
+    <div class="mb-3">
+      <label>Phone Number</label>
+      <input type="text" name="phoneNumber" class="form-control" value="<%= withdrawal.phoneNumber %>" required>
+    </div>
+    <div class="mb-3">
+      <label>Crypto ID</label>
+      <input type="text" name="cryptoId" class="form-control" value="<%= withdrawal.cryptoId %>" required>
     </div>
     <button class="btn btn-primary">Update</button>
     <a href="/withdrawals" class="btn btn-secondary">Cancel</a>

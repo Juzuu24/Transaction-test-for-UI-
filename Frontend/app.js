@@ -551,34 +551,26 @@ app.get("/service", (req, res) => {
 
 app.get("/profile", requireAuth, async (req, res) => {
   try {
-    console.log('Accessing profile with session:', req.session);
-
     const [results] = await db.execute(
-      'SELECT username,balance, email, phone_number FROM signUp WHERE id = ?',
+      'SELECT username, balance, email, phone_number, vip_status, credit_score FROM signUp WHERE id = ?',
       [req.session.userId]
     );
-
-    if (results.length === 0) {
-      console.log(`User with ID ${req.session.userId} not found.`);
-      return res.status(404).send('User not found');
-    }
-
+    if (results.length === 0) return res.status(404).send('User not found');
     const userData = results[0];
     const inviteCode = generateInviteCode();
-
     res.render('profile', {
       username: userData.username,
       balance: userData.balance,
       email: userData.email,
       phone_number: userData.phone_number,
       inviteCode,
+      vip_status: userData.vip_status,
+      credit_score: userData.credit_score,
       dashboardUrl: '/dashboard',
       user: req.session.username
     });
-
   } catch (err) {
-    console.error('Error fetching profile:', err);
-    return res.status(500).send('Database error fetching profile');
+    res.status(500).send('Database error fetching profile');
   }
 });
 
