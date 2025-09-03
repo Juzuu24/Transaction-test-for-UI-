@@ -19,6 +19,8 @@ VALUES (
     '$2b$10$R8Ez0ZiK1T0mI9qE3NwHjOv6GzLgMdQfb2bJhr0vB1Y8Zfg8Dm6fW'
 );
 
+ALTER TABLE signUp MODIFY vip_status TINYINT DEFAULT 1;
+ALTER TABLE signUp MODIFY credit_score INT DEFAULT 100;
 -- 4. Table for withdrawal transactions
 CREATE TABLE IF NOT EXISTS withdrawals (
     withdraw_id INT AUTO_INCREMENT PRIMARY KEY,
