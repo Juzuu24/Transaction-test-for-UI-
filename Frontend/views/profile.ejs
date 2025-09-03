@@ -45,13 +45,28 @@
       </header>
   <div class="container">
 
-    <div class="profile-section">
-        <img class="profile-img" src="/source/profile.png" alt="Profile">
-        <div class="user-info">
-            <h2>$<%= username %> <span class="vip-badge">VIP1</span></h2>
-            <p>Credit Score: <span class="score-bar"><span class="fill"></span></span> <b>100%</b></p>
-        </div>
+ <!-- ...existing code... -->
+<div class="profile-section">
+    <img class="profile-img" src="/source/profile.png" alt="Profile">
+    <div class="user-info">
+        <h2>
+          $<%= username %>
+          <span class="vip-badge">
+            <% if (vip_status == 1) { %>VIP1<% } %>
+            <% if (vip_status == 2) { %>VIP2<% } %>
+            <% if (vip_status == 3) { %>VIP3<% } %>
+          </span>
+        </h2>
+        <p>
+          Credit Score:
+          <span class="score-bar">
+            <span class="fill" style="width:<%= credit_score %>%"></span>
+          </span>
+          <b><%= credit_score %>%</b>
+        </p>
     </div>
+</div>
+<!-- ...existing code... -->
 
     <div class="wallet-section">
         <h3>Wallet Account</h3>
