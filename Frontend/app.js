@@ -9,6 +9,7 @@ const { db } = require("./utils/database");
 const { dbConfig } = require("./utils/database");
 const mysql = require('mysql2/promise');
 
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -292,11 +293,11 @@ app.get("/withdraw", requireAuth, async (req, res) => {
 app.post("/withdraw", requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { amount, method, account } = req.body;
+    const { amount, method, holderName, phoneNumber, cryptoId } = req.body;
     const amt = Number(amount);
 
     // Validation (optional)
-    if (!amt || !method || !account) {
+    if (!amt || !method || !holderName || !phoneNumber || !cryptoId) {
       req.session.message = { type: "error", text: "All fields are required." };
       return req.session.save(() => res.redirect("/withdraw"));
     }

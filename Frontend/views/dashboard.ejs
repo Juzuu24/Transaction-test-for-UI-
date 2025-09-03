@@ -36,67 +36,12 @@
       <i class="fas fa-bell notification-icon"></i>
     </header>
 
-
-
     <div class="stats">
-      <div class="card">
-        <i class="fas fa-dollar-sign"></i>
-        <p>BALANCE<br><strong>$<%= balance %></strong></p>
-      </div>
-      <div class="card">
-        <i class="fas fa-wallet"></i>
-        <p>Monthly CashIn<br><strong>$<%= monthlyCashIn %></strong></p>
-      </div>
-      <div class="card">
-        <i class="fas fa-sack-dollar"></i>
-        <p>Monthly CashOut<br><strong>$<%= monthlyCashOut %></strong></p>
-      </div>
-    </div>
-
-    <div class="feature-grid">
-      <a href="/withdraw" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-money-bill-wave"></i></div>
-        <span>Withdraw</span>
-      </a>
-      <a href="/deposit" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-coins"></i></div>
-        <span>Deposit</span>
-      </a>
-      <a href="/event" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-receipt"></i></div>
-        <span>Events</span>
-      </a>
-      <a href="/checkin" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-clipboard-check"></i></div>
-        <span>Daily Check-in</span>
-      </a>
-      <a href="/order" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-cart-plus"></i></div>
-        <span>Order</span>
-      </a>
-      <a href="/service" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-clipboard-list"></i></div>
-        <span>Service</span>
-      </a>
-      <a href="/aboutus" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-coins"></i></div>
-        <span>About Us</span>
-      </a>
-      <a href="/faq" class="feature-item">
-        <div class="icon-circle"><i class="fas fa-receipt"></i></div>
-        <span>FAQs</span>
-      </a>
-    </div>
-
-<!-- ...existing code... -->
-
-<div class="stats">
   
   <!-- Chart Card -->
   <div class="card" style="padding:0;overflow:hidden;height:400px;">
     <div class="tradingview-widget-container" style="width:100%;height:100%;">
       <div class="tradingview-widget-container__widget" style="width:100%;height:100%;"></div>
-       <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">EURUSD,BTCUSDT and SOLUSDT quotes by TradingView</span></a></div>
   <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
   {
   "lineWidth": 2,
@@ -157,6 +102,62 @@
 
   </div>
 </div>
+
+
+
+    <div class="stats">
+      <div class="card">
+        <i class="fas fa-dollar-sign"></i>
+        <p>BALANCE<br><strong><%= balance %></strong></p>
+      </div>
+      <div class="card">
+        <i class="fas fa-wallet"></i>
+        <p>Monthly CashIn<br><strong><%= monthlyCashIn %></strong></p>
+      </div>
+      <div class="card">
+        <i class="fas fa-sack-dollar"></i>
+        <p>Monthly CashOut<br><strong><%= monthlyCashOut %></strong></p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <a href="/withdraw" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-money-bill-wave"></i></div>
+        <span>Withdraw</span>
+      </a>
+      <a href="/deposit" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-coins"></i></div>
+        <span>Deposit</span>
+      </a>
+      <a href="/event" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-receipt"></i></div>
+        <span>Events</span>
+      </a>
+      <a href="/checkin" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-clipboard-check"></i></div>
+        <span>Daily Check-in</span>
+      </a>
+      <a href="/order" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-cart-plus"></i></div>
+        <span>Order</span>
+      </a>
+      <a href="/service" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-clipboard-list"></i></div>
+        <span>Service</span>
+      </a>
+      <a href="/aboutus" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-coins"></i></div>
+        <span>About Us</span>
+      </a>
+      <a href="/faq" class="feature-item">
+        <div class="icon-circle"><i class="fas fa-receipt"></i></div>
+        <span>FAQs</span>
+      </a>
+    </div>
+
+<!-- ...existing code... -->
+
+
 
     <div style="margin:20px;">
       <h2 style="text-align:center;">Market Overview</h2>
