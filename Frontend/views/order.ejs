@@ -4,8 +4,20 @@
     <meta charset="UTF-8">
     <!-- Make pages render at device width on mobile -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>
-  .order-alert-card {
+
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/order.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      /* visual cue when blocked */
+      .start-btn button[disabled]{
+        opacity: .6;
+        cursor: not-allowed;
+        filter: grayscale(20%);
+      }
+
+        .order-alert-card {
   background: #fffbe6;
   border: 1px solid #ffe58f;
   border-radius: 12px;
@@ -22,19 +34,6 @@
   color: #faad14;
   font-size: 1.4em;
 }
-</style>
-
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="/order.css">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-      /* visual cue when blocked */
-      .start-btn button[disabled]{
-        opacity: .6;
-        cursor: not-allowed;
-        filter: grayscale(20%);
-      }
     </style>
 </head>
 <body>
@@ -55,8 +54,8 @@
     <div class="container">
 
       <div class="profile-section">
-          <img class="profile-img" src="/source/profile.png" alt="Profile">
-          <div class="user-info">
+    <img class="profile-img" src="/source/profile.png" alt="Profile">
+    <div class="user-info">
         <h2>
           <%= username %>
           <span class="vip-badge">
@@ -112,8 +111,8 @@
           </a>
       </div>
       
-     <div id="order-alert" class="alert alert-warning d-flex align-items-center shadow-sm" role="alert" style="display:none;">
-  <i class="fas fa-gift me-2"></i>
+    <div id="order-alert" class="order-alert-card" style="display:none;">
+  <i class="fas fa-gift"></i>
   <span id="order-alert-message"></span>
 </div>
       <div class="start-btn">

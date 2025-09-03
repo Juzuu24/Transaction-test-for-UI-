@@ -498,7 +498,8 @@ app.post('/order', async (req, res) => {
       console.log('⛔ Lucky hit blocked. Hold set. Ask user to deposit +$50 to claim.');
       return res.status(403).json({
         message: '🎁 Lucky order hit! Please make a deposit of $50 first to claim this bonus lucky order.',
-        code: 'LUCKY_SETUP'
+        code: 'LUCKY_SETUP',
+        remaining: 50 - countToday
       });
     }
 
