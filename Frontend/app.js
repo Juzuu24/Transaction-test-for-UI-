@@ -398,7 +398,7 @@ app.get("/order", requireAuth, async (req, res) => {
   try {
     console.log('Accessing order with session:', req.session);
 
-    const [results] = await db.execute('SELECT username,balance FROM signUp WHERE id = ?', [req.session.userId]);
+    const [results] = await db.execute('SELECT username,balance,vip_status,credit_score FROM signUp WHERE id = ?', [req.session.userId]);
 
     if (results.length === 0) {
       console.log(`User with ID ${req.session.userId} not found.`);
