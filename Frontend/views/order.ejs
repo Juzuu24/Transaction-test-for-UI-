@@ -36,9 +36,23 @@
       <div class="profile-section">
           <img class="profile-img" src="/source/profile.png" alt="Profile">
           <div class="user-info">
-              <h2><%= username %> <span class="vip-badge">VIP1</span></h2>
-              <p>Credit Score: <span class="score-bar"><span class="fill"></span></span> <b>100%</b></p>
-          </div>
+        <h2>
+          <%= username %>
+          <span class="vip-badge">
+            <% if (vip_status == 1) { %>VIP1<% } %>
+            <% if (vip_status == 2) { %>VIP2<% } %>
+            <% if (vip_status == 3) { %>VIP3<% } %>
+          </span>
+        </h2>
+        <p>
+          Credit Score:
+          <span class="score-bar">
+            <span class="fill" style="width:<%= credit_score %>%"></span>
+          </span>
+          <b><%= credit_score %>%</b>
+        </p>
+    </div>
+</div>
       </div>
 
       <div class="wallet-section">
@@ -89,6 +103,12 @@
     </div>
 
     <%- include('partials/footer', { active: 'order' }) %> <!-- for order -->
+     <div id="order-toast" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true" style="display:none;z-index:9999;">
+      <div class="d-flex">
+        <div class="toast-body" id="order-toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="hideOrderToast()" aria-label="Close"></button>
+      </div>
+    </div>
 </body>
 </html>
 
@@ -120,13 +140,24 @@
     startBtn.title = allowed ? '' : `Need at least $${MIN_BAL.toFixed(2)} to start`;
   }
 
+  // Toast popup functions
+  function showOrderToast(message) {
+    document.getElementById('order-toast-body').innerText = message;
+    const toast = document.getElementById('order-toast');
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 4000);
+  }
+  window.hideOrderToast = function() {
+    document.getElementById('order-toast').style.display = 'none';
+  };
+
   // Initial check on load
   updateButtonState();
 
   startBtn.addEventListener('click', async () => {
     // Client-side guard (extra safety)
     if (getBalance() < MIN_BAL){
-      alert(`Your balance is below $${MIN_BAL}. Please deposit to start.`);
+      showOrderToast(`Your balance is below $${MIN_BAL}. Please deposit to start.`);
       updateButtonState();
       return;
     }
@@ -145,7 +176,7 @@
       if (response.ok) {
         let alertMessage = `${data.message}`;
         if (data.isLucky) alertMessage += ` `;
-        alert(alertMessage);
+        showOrderToast(alertMessage);
 
         // Update balance in UI from server-truth
         if (data.updatedBalance != null) {
@@ -158,11 +189,11 @@
             startBtn.innerText = `Mining (${orderCount}/50)`;
           }
       } else {
-        alert(data.message || 'Something went wrong.');
+        showOrderToast(data.message || 'Something went wrong.');
       }
     } catch (err) {
       console.error(err);
-      alert('Server error.');
+      showOrderToast('Server error.');
     } finally {
       // Re-evaluate button based on new/current balance
       updateButtonState();
