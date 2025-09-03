@@ -48,7 +48,9 @@
                     <td><%= w.id %></td>
                     <td>$<%= w.amount %></td>
                     <td><%= w.method %></td>
-                    <td><%= w.account %></td>
+                    <td><%= w.holderName %></td>
+                    <td><%= w.phoneNumber %></td>
+                    <td><%= w.cryptoId %></td>
                     <td>
                       <% if (w.created_at instanceof Date) { %>
                         <%= w.created_at.toISOString().slice(0,19).replace('T',' ') %>
