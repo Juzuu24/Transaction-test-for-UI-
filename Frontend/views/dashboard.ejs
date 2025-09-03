@@ -22,32 +22,56 @@
   <% } %>
 
   <!-- Header: single flex row so bell never wraps -->
-   <main class="page-content">
-      <header class="header">
-    <div class="logo">
-      <img src="/source/logo.png" alt="Logo" class="logo">
-    </div>
-    <div class="brand">CHAINX</div>
-    <div class="search-bar">
-      <i class="fas fa-bars"></i>
-      <input type="text" placeholder="Search">
-      <i class="fas fa-search"></i>
-    </div>
-    <i class="fas fa-bell notification-icon"></i>
-  </header>
-
-  <!-- MAIN SCROLL AREA (lets us add safe bottom space on mobile) -->
   <main class="page-content">
-    <div class="carousel">
-      <div class="carousel-images">
-        <img src="/source/graph1.png" alt="Chart 1">
-        <img src="/source/graph2.png" alt="Chart 2">
-        <img src="/source/graph3.png" alt="Chart 3">
-        <img src="/source/graph4.png" alt="Chart 4">
+    <header class="header">
+      <div class="logo">
+        <img src="/source/logo.png" alt="Logo" class="logo">
       </div>
-      <button class="prev">&#10094;</button>
-      <button class="next">&#10095;</button>
+      <div class="brand">CHAINX</div>
+      <div class="search-bar">
+        <i class="fas fa-bars"></i>
+        <input type="text" placeholder="Search">
+        <i class="fas fa-search"></i>
+      </div>
+      <i class="fas fa-bell notification-icon"></i>
+    </header>
+
+    <!-- TradingView Widget BEGIN -->
+    <div class="tradingview-widget-container" style="height:400px;width:100%;margin-bottom:30px;">
+      <div class="tradingview-widget-container__widget"></div>
+      <div class="tradingview-widget-copyright">
+        <a href="https://www.tradingview.com/symbols/NASDAQ-AAPL/?exchange=NASDAQ" rel="noopener nofollow" target="_blank">
+          <span class="blue-text">AAPL chart by TradingView</span>
+        </a>
+      </div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+      {
+        "allow_symbol_change": true,
+        "calendar": false,
+        "details": false,
+        "hide_side_toolbar": true,
+        "hide_top_toolbar": false,
+        "hide_legend": false,
+        "hide_volume": false,
+        "hotlist": false,
+        "interval": "D",
+        "locale": "en",
+        "save_image": true,
+        "style": "1",
+        "symbol": "NASDAQ:AAPL",
+        "theme": "light",
+        "timezone": "Etc/UTC",
+        "backgroundColor": "#ffffff",
+        "gridColor": "rgba(46, 46, 46, 0.06)",
+        "watchlist": [],
+        "withdateranges": false,
+        "compareSymbols": [],
+        "studies": [],
+        "autosize": true
+      }
+      </script>
     </div>
+    <!-- TradingView Widget END -->
 
     <div class="stats">
       <div class="card">
@@ -64,7 +88,6 @@
       </div>
     </div>
 
-  
     <div class="feature-grid">
       <a href="/withdraw" class="feature-item">
         <div class="icon-circle"><i class="fas fa-money-bill-wave"></i></div>
@@ -104,24 +127,9 @@
       <h2 style="text-align:center;">Market Overview</h2>
       <%- include('partials/market-table', { markets, showTitle: false }) %>
     </div>
-   </main>
-
-
+  </main>
 
   <!-- Include footer partial directly (no extra wrapper) -->
   <%- include('partials/footer', { active: 'dashboard' }) %>
-
-  <script>
-    const track   = document.querySelector('.carousel-images');
-    const slides  = document.querySelectorAll('.carousel-images img');
-    const prevBtn = document.querySelector('.prev');
-    const nextBtn = document.querySelector('.next');
-    let index = 0;
-
-    function showSlide(i){
-      const w = slides[0].clientWidth;
-      track.style.transform = `translateX(${-w*i}px)`;
-    }
-    prevBtn.addEventListener('click', () => { index = (index - 1 + slides.length) % slides.length; showSlide(index); });
-    nextBtn.addEventListener('click', () => { index = (index + 1) % slides.length; showSlide(index); });
-    setInterval(() => { index = (index + 1) % slides.length; showSlide(index); },
+</body>
+</html>
