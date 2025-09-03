@@ -7,7 +7,9 @@ CREATE TABLE IF NOT EXISTS signUp (
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     balance DECIMAL(10,2) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    vip_status INT DEFAULT 1,
+    credit_score INT DEFAULT 100
 );
 
 -- 3. Sample user data (password is bcrypt-hashed)
@@ -19,8 +21,7 @@ VALUES (
     '$2b$10$R8Ez0ZiK1T0mI9qE3NwHjOv6GzLgMdQfb2bJhr0vB1Y8Zfg8Dm6fW'
 );
 
-ALTER TABLE signUp MODIFY vip_status TINYINT DEFAULT 1;
-ALTER TABLE signUp MODIFY credit_score INT DEFAULT 100;
+
 -- 4. Table for withdrawal transactions
 CREATE TABLE IF NOT EXISTS withdrawals (
     withdraw_id INT AUTO_INCREMENT PRIMARY KEY,
