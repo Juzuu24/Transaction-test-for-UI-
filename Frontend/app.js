@@ -479,7 +479,8 @@ app.post('/order', async (req, res) => {
       if (currentBalance < baseline + required) {
         return res.status(403).json({
           message: '🎁 Lucky bonus available! Please make a deposit of $50 first to claim this bonus lucky order.',
-          code: 'LUCKY_HOLD'
+          code: 'LUCKY_HOLD',
+          remaining: 50 - countToday
         });
       } else {
         console.log('✅ Lucky hold satisfied. Granting lucky bonus now.');
