@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <!-- Make pages render at device width on mobile -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  .order-alert-card {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  font-size: 1.1rem;
+  color: #614700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.order-alert-card .fa-gift {
+  color: #faad14;
+  font-size: 1.4em;
+}
+</style>
 
     <title>Dashboard</title>
     <link rel="stylesheet" href="/order.css">
@@ -31,14 +50,7 @@
         <i class="fas fa-bell notification-icon"></i>
     </header>
 
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
-  <div id="order-toast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="order-toast-body"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
+   
 
     <div class="container">
 
@@ -100,11 +112,10 @@
           </a>
       </div>
       
-      <div class="vip-card">
-          <span class="vip-badge">VIP1</span>
-          <span class="comm">Commx0.5%</span>
-      </div>
-
+     <div id="order-alert" class="alert alert-warning d-flex align-items-center shadow-sm" role="alert" style="display:none;">
+  <i class="fas fa-gift me-2"></i>
+  <span id="order-alert-message"></span>
+</div>
       <div class="start-btn">
         <!-- start disabled by default; JS will enable if balance >= 50 -->
         <button id="startBtn" disabled>Mining (0/50)</button>
@@ -145,18 +156,15 @@
     startBtn.title = allowed ? '' : `Need at least $${MIN_BAL.toFixed(2)} to start`;
   }
 
-  // Bootstrap Toast popup functions
-  function showOrderToast(message) {
-    document.getElementById('order-toast-body').innerText = message;
-    const toastEl = document.getElementById('order-toast');
-    const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 4000 });
-    toast.show();
-  }
-  window.hideOrderToast = function() {
-    const toastEl = document.getElementById('order-toast');
-    const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
-    toast.hide();
-  };
+
+  function showOrderAlert(message) {
+  document.getElementById('order-alert-message').innerHTML = message;
+  document.getElementById('order-alert').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('order-alert').style.display = 'none';
+  }, 5000);
+}
+ 
 
   // Initial check on load
   updateButtonState();
