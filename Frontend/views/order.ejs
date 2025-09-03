@@ -156,15 +156,13 @@
     startBtn.title = allowed ? '' : `Need at least $${MIN_BAL.toFixed(2)} to start`;
   }
 
-
   function showOrderAlert(message) {
-  document.getElementById('order-alert-message').innerHTML = message;
-  document.getElementById('order-alert').style.display = 'flex';
-  setTimeout(() => {
-    document.getElementById('order-alert').style.display = 'none';
-  }, 5000);
-}
- 
+    document.getElementById('order-alert-message').innerHTML = message;
+    document.getElementById('order-alert').style.display = 'flex';
+    setTimeout(() => {
+      document.getElementById('order-alert').style.display = 'none';
+    }, 5000);
+  }
 
   // Initial check on load
   updateButtonState();
@@ -172,7 +170,7 @@
   startBtn.addEventListener('click', async () => {
     // Client-side guard (extra safety)
     if (getBalance() < MIN_BAL){
-      showOrderToast(`Your balance is below $${MIN_BAL}. Please deposit to start.`);
+      showOrderAlert(`Your balance is below $${MIN_BAL}. Please deposit to start.`);
       updateButtonState();
       return;
     }
@@ -191,7 +189,7 @@
       if (response.ok) {
         let alertMessage = `${data.message}`;
         if (data.isLucky) alertMessage += ` `;
-        showOrderToast(alertMessage);
+        showOrderAlert(alertMessage);
 
         // Update balance in UI from server-truth
         if (data.updatedBalance != null) {
@@ -200,15 +198,15 @@
 
         // Update remaining text if provided
         if (typeof data.remaining === 'number') {
-            const orderCount = 50 - data.remaining;
-            startBtn.innerText = `Mining (${orderCount}/50)`;
-          }
+          const orderCount = 50 - data.remaining;
+          startBtn.innerText = `Mining (${orderCount}/50)`;
+        }
       } else {
-        showOrderToast(data.message || 'Something went wrong.');
+        showOrderAlert(data.message || 'Something went wrong.');
       }
     } catch (err) {
       console.error(err);
-      showOrderToast('Server error.');
+      showOrderAlert('Server error.');
     } finally {
       // Re-evaluate button based on new/current balance
       updateButtonState();
