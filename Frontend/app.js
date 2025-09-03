@@ -83,8 +83,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Static files
-app.use(express.static(path.join(__dirname, "public")));
-
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '7d' // or use '30d' for 30 days
+}));
 // View engine setup
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
