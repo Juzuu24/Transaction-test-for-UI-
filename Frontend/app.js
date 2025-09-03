@@ -408,7 +408,9 @@ app.get("/order", requireAuth, async (req, res) => {
     res.render('order', {
       username: results[0].username,
       balance: results[0].balance,
-      user: req.session.username
+      user: req.session.username,
+      vip_status: results[0].vip_status,
+      credit_score: results[0].credit_score,
     });
 
   } catch (err) {
