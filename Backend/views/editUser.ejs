@@ -30,15 +30,18 @@
       <input type="text" name="password_hash" class="form-control" value="<%= user.password_hash %>">
     </div>
 
-    <label>VIP Status:</label>
+    <div>
+       <label>VIP Status:</label>
   <select name="vip_status">
     <option value="1" <%= user.vip_status == 1 ? 'selected' : '' %>>VIP1</option>
     <option value="2" <%= user.vip_status == 2 ? 'selected' : '' %>>VIP2</option>
     <option value="3" <%= user.vip_status == 3 ? 'selected' : '' %>>VIP3</option>
   </select>
+    </div>
 
-  <label>Credit Score:</label>
-  <select name="credit_score">
+    <div>
+      <label>Credit Score:</label>
+      <select name="credit_score">
     <option value="0" <%= user.credit_score == 0 ? 'selected' : '' %>>0%</option>
     <option value="50" <%= user.credit_score == 50 ? 'selected' : '' %>>50%</option>
     <option value="100" <%= user.credit_score == 100 ? 'selected' : '' %>>100%</option>

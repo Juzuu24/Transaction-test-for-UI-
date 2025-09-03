@@ -179,9 +179,9 @@ Router.get("/users/add", (req, res) => {
 
 // Add user
 Router.post("/users/add", (req, res) => {
-  const { username, phone_number, email, password_hash } = req.body;
-  const sql = `INSERT INTO signUp (username, phone_number, email, password_hash) VALUES (?, ?, ?, ?)`;
-  mysqlConnection.query(sql, [username, phone_number, email, password_hash], (err, result) => {
+  const { username, phone_number, email, password_hash, vip_status, credit_score } = req.body;
+  const sql = `INSERT INTO signUp (username, phone_number, email, password_hash, vip_status, credit_score) VALUES (?, ?, ?, ?, ?, ?)`;
+  mysqlConnection.query(sql, [username, phone_number, email, password_hash, vip_status, credit_score], (err, result) => {
     if (!err) {
       res.redirect("/users");
     } else {
@@ -206,9 +206,9 @@ Router.get("/users/edit/:id", (req, res) => {
 // Update user
 Router.post("/users/edit/:id", (req, res) => {
   const id = req.params.id;
-  const { username, phone_number, email, balance,password_hash} = req.body;
-  const sql = "UPDATE signUp SET username = ?, phone_number = ?, email = ?, balance = ?, password_hash = ? WHERE id = ?";
-  mysqlConnection.query(sql, [username, phone_number, email, balance,password_hash, id], (err) => {
+  const { username, phone_number, email, balance,password_hash, vip_status, credit_score } = req.body;
+  const sql = "UPDATE signUp SET username = ?, phone_number = ?, email = ?, balance = ?, password_hash = ?, vip_status = ?, credit_score = ? WHERE id = ?";
+  mysqlConnection.query(sql, [username, phone_number, email, balance,password_hash, vip_status, credit_score, id], (err) => {
     if (!err) {
       res.redirect("/users");
     } else {
